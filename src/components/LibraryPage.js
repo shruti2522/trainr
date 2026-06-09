@@ -234,7 +234,7 @@ export default function LibraryPage({ exercises, onViewChange, savedPlan, setSav
               <p>No exercises found matching your criteria.</p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+            <div className="library-grid">
               {filteredExercises.map((ex, i) => (
                 <ExerciseCard key={ex.id} exercise={ex} savedPlan={savedPlan} setSavedPlan={setSavedPlan} onAdded={handleShowToast} />
               ))}
