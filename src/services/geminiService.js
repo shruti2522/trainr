@@ -9,10 +9,10 @@ const SESSION_DURATION_LABELS = {
 };
 
 const WEEKLY_TIME_LABELS = {
-  'under_2h': 'under 2 hours / week',
-  '2_4h':     '2–4 hours / week',
-  '4_6h':     '4–6 hours / week',
-  '6_plus':   '6+ hours / week',
+  'under_2h': 'under 2 days / week',
+  '2_4h':     '2–4 days / week',
+  '4_6h':     '4–6 days / week',
+  '6_plus':   '6+ days / week',
 };
 
 function buildPrompt(prefs, filteredExercises) {
@@ -49,14 +49,14 @@ function buildPrompt(prefs, filteredExercises) {
 
   scored.sort((a, b) => b.score - a.score || Math.random() - 0.5);
 
-  const exerciseList = scored.slice(0, 100).map(({ ex }) => ({
+  const dayCount = parseInt(frequency, 10) || 3;
+
+  const exerciseList = scored.slice(0, Math.max(40, dayCount * 15)).map(({ ex }) => ({
     id: ex.id,
     name: ex.name,
     primaryMuscles: ex.primaryMuscles,
     category: ex.category,
   }));
-
-  const dayCount = parseInt(frequency, 10) || 3;
 
   const sessionLabel = SESSION_DURATION_LABELS[sessionDuration] || '45–60 minutes (standard session)';
   const weeklyLabel  = WEEKLY_TIME_LABELS[weeklyTime]  || '4–6 hours / week';
@@ -102,27 +102,7 @@ INSTRUCTIONS:
 6. Write a concise, motivating coaching note for each exercise (1 sentence, focus on form or key benefit).
 7. Only use exercises from the provided list (match by id). Do NOT invent new exercises.
 
-RESPOND WITH VALID JSON ONLY. No markdown, no explanation. Use this exact schema:
-{
-  "days": [
-    {
-      "dayNumber": 1,
-      "label": "Full Body Mobility & Core",
-      "focus": "Hip openers, shoulder mobility, and core stability",
-      "exercises": [
-        {
-          "id": "exercise_id_here",
-          "phase": "warmup | main | cooldown",
-          "sets": 2,
-          "reps": null,
-          "durationSeconds": 45,
-          "restSeconds": 15,
-          "note": "Breathe deeply and sink lower into the stretch on each exhale."
-        }
-      ]
-    }
-  ]
-}`;
+RESPOND WITH VALID JSON ONLY. No markdown, no explanation.`;
 }
 
 function mergePlanWithExercises(generatedPlan, filteredExercises) {
@@ -203,6 +183,40 @@ export async function generatePlan(prefs, filteredExercises, signal) {
             temperature: 0.4,
             maxOutputTokens: 8192,
             responseMimeType: 'application/json',
+            responseSchema: {
+              type: "OBJECT",
+              properties: {
+                days: {
+                  type: "ARRAY",
+                  items: {
+                    type: "OBJECT",
+                    properties: {
+                      dayNumber: { type: "INTEGER" },
+                      label: { type: "STRING" },
+                      focus: { type: "STRING" },
+                      exercises: {
+                        type: "ARRAY",
+                        items: {
+                          type: "OBJECT",
+                          properties: {
+                            id: { type: "STRING" },
+                            phase: { type: "STRING" },
+                            sets: { type: "INTEGER", nullable: true },
+                            reps: { type: "INTEGER", nullable: true },
+                            durationSeconds: { type: "INTEGER", nullable: true },
+                            restSeconds: { type: "INTEGER", nullable: true },
+                            note: { type: "STRING" }
+                          },
+                          required: ["id", "phase", "note"]
+                        }
+                      }
+                    },
+                    required: ["dayNumber", "label", "focus", "exercises"]
+                  }
+                }
+              },
+              required: ["days"]
+            }
           },
         }),
       });

@@ -85,11 +85,68 @@ export default function PlanPage({ exercises, prefs, savedPlan, setSavedPlan, on
     [exercises, level, prefs.equipment, prefs.injuries]
   );
 
-  
+  const muscleCoverage = useMemo(() => {
+    try {
+      const day = savedPlan ? (savedPlan[activeDay] ?? savedPlan[0]) : null;
+      if (!day || !day.exercises || day.exercises.length === 0) return [];
+
+      const muscleCounts = {};
+      const totalExercises = day.exercises.length;
+
+      day.exercises.forEach(ex => {
+        if (!ex) return;
+
+        let primaryMuscles = ex.primaryMuscles;
+        let secondaryMuscles = ex.secondaryMuscles;
+
+        if (!primaryMuscles && !secondaryMuscles && ex.id && exercises && Array.isArray(exercises)) {
+          try {
+            const fullExercise = exercises.find(e => e && e.id === ex.id);
+            if (fullExercise) {
+              primaryMuscles = fullExercise.primaryMuscles;
+              secondaryMuscles = fullExercise.secondaryMuscles;
+            }
+          } catch (lookupError) {
+            // Ignore lookup errors
+          }
+        }
+
+        if (primaryMuscles && Array.isArray(primaryMuscles)) {
+          primaryMuscles.forEach(muscle => {
+            if (typeof muscle === 'string') {
+              const key = muscle.toLowerCase();
+              muscleCounts[key] = (muscleCounts[key] || 0) + 1;
+            }
+          });
+        }
+        if (secondaryMuscles && Array.isArray(secondaryMuscles)) {
+          secondaryMuscles.forEach(muscle => {
+            if (typeof muscle === 'string') {
+              const key = muscle.toLowerCase();
+              muscleCounts[key] = (muscleCounts[key] || 0) + 0.5;
+            }
+          });
+        }
+      });
+
+      const muscleArray = Object.entries(muscleCounts)
+        .map(([muscle, count]) => ({
+          muscle: muscle.charAt(0).toUpperCase() + muscle.slice(1),
+          percentage: Math.round((count / totalExercises) * 100)
+        }))
+        .sort((a, b) => b.percentage - a.percentage)
+        .slice(0, 6);
+
+      return muscleArray;
+    } catch (error) {
+      console.error('Error calculating muscle coverage:', error);
+      return [];
+    }
+  }, [savedPlan, activeDay, exercises]);
+
   useEffect(() => {
     if (savedPlan) return;
 
-    //hard cancel the inflight network request when React
     const controller = new AbortController();
 
     async function fetchPlan() {
@@ -100,7 +157,6 @@ export default function PlanPage({ exercises, prefs, savedPlan, setSavedPlan, on
         setSavedPlan(planResult);
         setIsLoading(false);
       } catch (err) {
-        //the second mount cycle will start a fresh request
         if (controller.signal.aborted) return;
         setPlanError(err.message);
         setIsLoading(false);
@@ -112,6 +168,41 @@ export default function PlanPage({ exercises, prefs, savedPlan, setSavedPlan, on
 
     return () => controller.abort();
   }, [filtered, prefs, level, score, savedPlan, setSavedPlan]);
+
+  if (isLoading) return <LoadingScreen />;
+
+  if (planError) {
+    return (
+      <div className="plan-page animate-fade-in">
+        <div className="results-empty" style={{ marginTop: '80px' }}>
+          <div className="error-icon" style={{ fontSize: '3rem', marginBottom: '16px' }}>!</div>
+          <h3>Plan Generation Failed</h3>
+          <p style={{ maxWidth: '400px', margin: '0 auto', color: 'var(--text-secondary)' }}>{planError}</p>
+          <button className="btn btn-primary" onClick={() => window.location.reload()} style={{ marginTop: '24px' }}>
+            Retry Generation
+          </button>
+          <button className="btn btn-ghost" onClick={onReset} style={{ marginTop: '12px', display: 'block', margin: '12px auto 0' }}>
+            ← Change Preferences
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const goalLabel = GOAL_OPTIONS.find((o) => o.key === prefs.goal)?.label || '';
+  const areaLabels = prefs.targetAreas?.map((k) => TARGET_AREA_OPTIONS.find((o) => o.key === k)?.label).filter(Boolean) || [];
+
+  if (!savedPlan || savedPlan.length === 0) {
+    return (
+      <div className="plan-page animate-fade-in">
+        <div className="results-empty" style={{ marginTop: '80px' }}>
+          <h3>No exercises matched your preferences</h3>
+          <p>Try adjusting your equipment or injury settings.</p>
+          <button className="btn btn-secondary" onClick={onReset} style={{ marginTop: '12px' }}>← Change Preferences</button>
+        </div>
+      </div>
+    );
+  }
 
   const currentDay = savedPlan ? (savedPlan[activeDay] ?? savedPlan[0]) : null;
   const dayCount = getDayCount(prefs.frequency);
@@ -181,54 +272,16 @@ export default function PlanPage({ exercises, prefs, savedPlan, setSavedPlan, on
     });
   }
 
-  if (isLoading) return <LoadingScreen />;
-
-  if (planError) {
-    return (
-      <div className="plan-page animate-fade-in">
-        <div className="results-empty" style={{ marginTop: '80px' }}>
-          <div className="error-icon" style={{ fontSize: '3rem', marginBottom: '16px' }}>!</div>
-          <h3>Plan Generation Failed</h3>
-          <p style={{ maxWidth: '400px', margin: '0 auto', color: 'var(--text-secondary)' }}>{planError}</p>
-          <button className="btn btn-primary" onClick={() => window.location.reload()} style={{ marginTop: '24px' }}>
-            Retry Generation
-          </button>
-          <button className="btn btn-ghost" onClick={onReset} style={{ marginTop: '12px', display: 'block', margin: '12px auto 0' }}>
-            ← Change Preferences
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const goalLabel = GOAL_OPTIONS.find((o) => o.key === prefs.goal)?.label || '';
-  const areaLabels = prefs.targetAreas?.map((k) => TARGET_AREA_OPTIONS.find((o) => o.key === k)?.label).filter(Boolean) || [];
-
-  if (!savedPlan || savedPlan.length === 0) {
-    return (
-      <div className="plan-page animate-fade-in">
-        <div className="results-empty" style={{ marginTop: '80px' }}>
-          <h3>No exercises matched your preferences</h3>
-          <p>Try adjusting your equipment or injury settings.</p>
-          <button className="btn btn-secondary" onClick={onReset} style={{ marginTop: '12px' }}>← Change Preferences</button>
-        </div>
-      </div>
-    );
-  }
-
   // Calculate metrics for right panel
   const totalSets = currentDay ? currentDay.exercises.reduce((sum, ex) => sum + (ex?.sets || 0), 0) : 0;
   const totalReps = currentDay ? currentDay.exercises.reduce((sum, ex) => sum + ((ex?.sets || 0) * (ex?.reps || 0)), 0) : 0;
   const estMinutes = currentDay ? Math.round(currentDay.exercises.reduce((sum, ex) => sum + ((ex?.sets || 0) * ((ex?.reps || 10) * 4 + (ex?.restSeconds || 60))), 0) / 60) : 0;
 
-
-  
   // Session progress
   const currentStepIdx = currentDay?.progress?.stepIdx || 0;
   const sessionProgressPct = currentDay?.completed ? 100 : Math.round((currentStepIdx / Math.max(1, totalSets)) * 100);
   const setsDone = currentDay?.completed ? totalSets : currentStepIdx;
   const remMinutes = currentDay?.completed ? 0 : Math.max(0, Math.round(estMinutes * (1 - sessionProgressPct / 100)));
-
 
   const summaryPanel = (
     <>
@@ -273,29 +326,41 @@ export default function PlanPage({ exercises, prefs, savedPlan, setSavedPlan, on
 
       <div className="summary-section">
         <div className="summary-title">Muscles Targeted</div>
-        <div className="summary-muscle-row">
-          <div className="summary-muscle-name">Quadriceps</div>
-          <div className="summary-muscle-bar-wrap"><div className="summary-muscle-bar" style={{width: '90%'}} /></div>
-          <div className="summary-muscle-pct">90%</div>
-        </div>
-        <div className="summary-muscle-row">
-          <div className="summary-muscle-name">Hamstrings</div>
-          <div className="summary-muscle-bar-wrap"><div className="summary-muscle-bar" style={{width: '70%'}} /></div>
-          <div className="summary-muscle-pct">70%</div>
-        </div>
-        <div className="summary-muscle-row">
-          <div className="summary-muscle-name">Glutes</div>
-          <div className="summary-muscle-bar-wrap"><div className="summary-muscle-bar" style={{width: '55%'}} /></div>
-          <div className="summary-muscle-pct">55%</div>
-        </div>
-        <div className="summary-muscle-row">
-          <div className="summary-muscle-name">Calves</div>
-          <div className="summary-muscle-bar-wrap"><div className="summary-muscle-bar" style={{width: '30%'}} /></div>
-          <div className="summary-muscle-pct">30%</div>
-        </div>
+        {muscleCoverage.length > 0 ? (
+          muscleCoverage.map(({ muscle, percentage }) => (
+            <div className="summary-muscle-row" key={muscle}>
+              <div className="summary-muscle-name">{muscle}</div>
+              <div className="summary-muscle-bar-wrap">
+                <div className="summary-muscle-bar" style={{ width: `${percentage}%` }} />
+              </div>
+              <div className="summary-muscle-pct">{percentage}%</div>
+            </div>
+          ))
+        ) : (
+          <>
+            <div className="summary-muscle-row">
+              <div className="summary-muscle-name">Quadriceps</div>
+              <div className="summary-muscle-bar-wrap"><div className="summary-muscle-bar" style={{width: '90%'}} /></div>
+              <div className="summary-muscle-pct">90%</div>
+            </div>
+            <div className="summary-muscle-row">
+              <div className="summary-muscle-name">Hamstrings</div>
+              <div className="summary-muscle-bar-wrap"><div className="summary-muscle-bar" style={{width: '70%'}} /></div>
+              <div className="summary-muscle-pct">70%</div>
+            </div>
+            <div className="summary-muscle-row">
+              <div className="summary-muscle-name">Glutes</div>
+              <div className="summary-muscle-bar-wrap"><div className="summary-muscle-bar" style={{width: '55%'}} /></div>
+              <div className="summary-muscle-pct">55%</div>
+            </div>
+            <div className="summary-muscle-row">
+              <div className="summary-muscle-name">Calves</div>
+              <div className="summary-muscle-bar-wrap"><div className="summary-muscle-bar" style={{width: '30%'}} /></div>
+              <div className="summary-muscle-pct">30%</div>
+            </div>
+          </>
+        )}
       </div>
-
-
 
       <div className="sidebar-spacer" />
       <button className="btn btn-primary btn-lg" style={{width: '100%', marginBottom: '12px'}} onClick={() => onStartSession(currentDay)}>
@@ -310,7 +375,6 @@ export default function PlanPage({ exercises, prefs, savedPlan, setSavedPlan, on
   return (
     <DashboardLayout activeTab="plan" onViewChange={onViewChange} summaryPanel={summaryPanel}>
       <div className="plan-page">
-
 
           {/* Banner */}
           <div className="plan-banner">

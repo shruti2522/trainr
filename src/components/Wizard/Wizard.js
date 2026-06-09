@@ -26,9 +26,9 @@ export default function Wizard({ onComplete }) {
 
   const canProceed =
     step === 1 ? !!frequency :
-    step === 2 ? !!sessionDuration :
-    step === 3 ? !!weeklyTime :
-    step === 4 ? !!duration :
+    step === 2 ? !!duration :
+    step === 3 ? !!sessionDuration :
+    step === 4 ? !!weeklyTime :
     step === 5 ? !!goal :
     true;
 
@@ -58,9 +58,9 @@ export default function Wizard({ onComplete }) {
 
         <div className="wizard-body">
           {step === 1 && <StepFrequency       value={frequency}       onChange={setFrequency} />}
-          {step === 2 && <StepSessionDuration value={sessionDuration} onChange={setSessionDuration} />}
-          {step === 3 && <StepWeeklyTime      value={weeklyTime}      onChange={setWeeklyTime} />}
-          {step === 4 && <StepDuration        value={duration}        onChange={setDuration} />}
+          {step === 2 && <StepDuration        value={duration}        onChange={setDuration} />}
+          {step === 3 && <StepSessionDuration value={sessionDuration} onChange={setSessionDuration} />}
+          {step === 4 && <StepWeeklyTime      value={weeklyTime}      onChange={setWeeklyTime} />}
           {step === 5 && <StepGoal            value={goal}            onChange={setGoal} />}
           {step === 6 && <StepTargetAreas     selected={targetAreas}  onChange={setTargetAreas} />}
           {step === 7 && <StepEquipment       selected={equipment}    onChange={setEquipment} />}

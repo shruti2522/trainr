@@ -6,8 +6,8 @@ export default function DashboardLayout({ children, activeTab, onViewChange, sum
       {/* Left Sidebar */}
       <aside className="layout-sidebar">
         <a href="/" className="sidebar-logo" style={{textDecoration: "none"}} onClick={(e) => { e.preventDefault(); onViewChange('hero'); }}>
-          <span className="sidebar-logo-icon">FS</span>
-          FitSuggest
+          <span className="sidebar-logo-icon">T</span>
+          Trainr
         </a>
         
         <div className="sidebar-section-title">Training</div>
@@ -23,7 +23,6 @@ export default function DashboardLayout({ children, activeTab, onViewChange, sum
         >
           <span>Exercise Library</span>
         </div>
-        <div className="sidebar-link">Schedule</div>
         
         <div className="sidebar-section-title">Track</div>
         <div className="sidebar-link">

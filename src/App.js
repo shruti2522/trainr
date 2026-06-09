@@ -118,8 +118,8 @@ function App() {
       {view !== 'session' && view !== 'results' && view !== 'library' && (
         <nav className="site-nav" aria-label="Site navigation">
           <a href="/" className="site-logo" id="site-logo-link">
-            <span className="site-logo-icon">FS</span>
-            FitSuggest
+            <span className="site-logo-icon">T</span>
+            Trainr
           </a>
           {view !== 'hero' && view !== 'complete' && (
             <button

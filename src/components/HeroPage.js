@@ -5,14 +5,13 @@ export default function HeroPage({ onStart }) {
     <div className="hero-page">
       <div className="hero-content">
         <div className="hero-badge animate-fade-up">
-          <span className="badge badge-cyan">Intelligent Planning</span>
         </div>
         <h1 className="hero-title animate-fade-up animation-delay-100">
-          Your perfect workout, <span className="hero-title-gradient">scientifically matched.</span>
+          Your perfect workout, <span className="hero-title-gradient">scientifically matched</span>
         </h1>
         <p className="hero-subtitle animate-fade-up animation-delay-200">
-          Tell us about your fitness level, available equipment, and any injuries -
-          we'll build a tailored exercise plan in seconds.
+          Tell us about your fitness level, available equipment, any injuries and
+          we'll build a tailored exercise plan in seconds
         </p>
         <div className="hero-cta animate-fade-up animation-delay-300">
           <button

@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
-import { formatCategoryLabel, CATEGORY_COLORS } from '../utils/helpers';
+import { formatCategoryLabel, CATEGORY_COLORS, getExerciseImageUrl } from '../utils/helpers';
 import PickExerciseModal from './PickExerciseModal';
 
 export default function ExerciseRow({ exercise, index, isCompleted, filteredPool, onShuffle, onDelete, onPick, isReordering, onDragStart, onDragEnter, onDragEnd }) {
   const [showPicker, setShowPicker] = useState(false);
+  const [imgError, setImgError] = useState(false);
   
   if (!exercise) return null;
   
   const categoryClass = CATEGORY_COLORS[exercise.category] || 'badge-gray';
-  const effort = exercise.durationSeconds 
+  const effort = exercise.durationSeconds
     ? `${exercise.sets} sets × ${exercise.durationSeconds}s`
     : exercise.sets ? `${exercise.sets} sets × ${exercise.reps} reps` : null;
 
-  // Completion state comes from props now
+  const imageUrl = exercise.images && exercise.images[0]
+    ? getExerciseImageUrl(exercise.images[0])
+    : null;
+
 
   return (
     <>
@@ -40,7 +44,19 @@ export default function ExerciseRow({ exercise, index, isCompleted, filteredPool
           <span className="ex-row-num" style={{ fontSize: '0.9rem', minWidth: '20px' }}>{index + 1}</span>
         )}
 
-        <div className="ex-row-info" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        {imageUrl && !imgError && (
+          <div className="ex-row-thumb" style={{ width: '110px', height: '110px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0, backgroundColor: 'var(--bg-base)' }}>
+            <img
+              src={imageUrl}
+              alt={exercise.name}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              onError={() => setImgError(true)}
+              loading="lazy"
+            />
+          </div>
+        )}
+
+        <div className="ex-row-info" style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <span className="ex-row-name" style={{ margin: 0, textDecoration: isCompleted ? 'line-through' : 'none' }}>
               {exercise.name}
