@@ -51,7 +51,7 @@ function App() {
   const [workoutElapsed, setWorkoutElapsed] = useLocalStorage('fs_elapsed', 0);
   const [savedPlan, setSavedPlan] = useLocalStorage('fs_plan', null);
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const prevIsMobile = useRef(null);
 
@@ -60,10 +60,10 @@ function App() {
       const mobile = window.innerWidth <= 1024;
       if (prevIsMobile.current === null) {
         setIsMobile(mobile);
-        setIsSidebarOpen(!mobile);
+        setIsSidebarOpen(false);
       } else if (prevIsMobile.current !== mobile) {
         setIsMobile(mobile);
-        setIsSidebarOpen(!mobile);
+        setIsSidebarOpen(false);
       }
       prevIsMobile.current = mobile;
     };
@@ -97,6 +97,7 @@ function App() {
   const handleWizardComplete = useCallback((preferences) => {
     setPrefs(preferences);
     setView('results');
+    setIsSidebarOpen(false);
   }, [setPrefs, setView]);
 
   const handleReset = useCallback(() => {

@@ -363,7 +363,7 @@ export default function PlanPage({ exercises, prefs, savedPlan, setSavedPlan, on
       </div>
 
       <div className="sidebar-spacer" />
-      <button className="btn btn-primary btn-lg" style={{width: '100%', marginBottom: '12px'}} onClick={() => onStartSession(currentDay)}>
+      <button className="btn btn-primary btn-lg" style={{width: '100%', marginBottom: '8px'}} onClick={() => onStartSession(currentDay)}>
         {currentDay?.completed ? 'Review Session' : currentStepIdx > 0 ? 'Resume Session' : 'Start Session'}
       </button>
       <button className="btn btn-ghost" style={{width: '100%', border: '1px solid var(--accent-primary)', color: 'var(--accent-primary)'}} onClick={onReset}>

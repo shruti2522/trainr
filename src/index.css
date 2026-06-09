@@ -1409,7 +1409,7 @@ h1, h2, h3, h4 {
   border-left: 0.5px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
-  padding: 24px 20px;
+  padding: 16px 20px;
   flex-shrink: 0;
   overflow-y: auto;
   scrollbar-width: none;
@@ -1769,7 +1769,7 @@ h1, h2, h3, h4 {
 
 /* Summary Panel Styling */
 .summary-section {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .summary-title {
@@ -1778,7 +1778,7 @@ h1, h2, h3, h4 {
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .summary-progress-wrap {
@@ -1860,7 +1860,7 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .summary-muscle-name {
