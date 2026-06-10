@@ -100,15 +100,20 @@ function App() {
 
   const handleWizardComplete = useCallback((preferences) => {
     setPrefs(preferences);
+    setSavedPlan(null);
+    setHistory([]);
+    setWorkoutElapsed(0);
     setView('results');
     setIsSidebarOpen(false);
-  }, [setPrefs, setView]);
+  }, [setPrefs, setSavedPlan, setHistory, setWorkoutElapsed, setView]);
 
   const handleReset = useCallback(() => {
     setPrefs(null);
     setSavedPlan(null);
+    setHistory([]);
+    setWorkoutElapsed(0);
     setView('wizard');
-  }, [setPrefs, setSavedPlan, setView]);
+  }, [setPrefs, setSavedPlan, setHistory, setWorkoutElapsed, setView]);
 
   const handleStart = useCallback(() => setView('wizard'), [setView]);
 

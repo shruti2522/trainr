@@ -69,8 +69,8 @@ export default function LibraryPage({ exercises, onViewChange, savedPlan, setSav
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '16px', marginBottom: showFilters ? '16px' : '24px', flexWrap: 'wrap' }}>
-          <div style={{ flex: 1, minWidth: '280px', position: 'relative' }}>
+        <div style={{ display: 'flex', gap: '16px', marginBottom: showFilters ? '16px' : '24px', flexWrap: 'nowrap', alignItems: 'center' }}>
+          <div style={{ flex: 1, position: 'relative', minWidth: 0 }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             <input 
               type="text" 
@@ -104,7 +104,8 @@ export default function LibraryPage({ exercises, onViewChange, savedPlan, setSav
                 top: 0,
                 right: 0,
                 bottom: 0,
-                width: '540px',
+                width: '100%',
+                maxWidth: '540px',
                 background: 'var(--bg-surface)',
                 boxShadow: '-4px 0 24px rgba(0,0,0,0.15)',
                 padding: '32px 24px',

@@ -1500,11 +1500,11 @@ h1, h2, h3, h4 {
   }
   
   .layout-main {
-    order: 2;
+    order: 1;
   }
   
   .layout-summary {
-    order: 1;
+    order: 2;
   }
   
   .mobile-header {
@@ -2033,6 +2033,7 @@ h1, h2, h3, h4 {
   height: 128px;
   flex-shrink: 0;
 }
+.goal-ring-wrap svg { width: 100%; height: 100%; }
 
 .goal-ring-text {
   position: absolute;
@@ -2210,6 +2211,7 @@ h1, h2, h3, h4 {
   height: 120px;
   flex-shrink: 0;
 }
+.prog-ring-wrap svg { width: 100%; height: 100%; }
 
 .prog-ring-inner {
   position: absolute;
@@ -2631,3 +2633,89 @@ h1, h2, h3, h4 {
   max-width: 320px;
 }
 
+@media (max-width: 1024px) {
+  .inner-page { padding: 24px 24px; }
+}
+@media (max-width: 768px) {
+  .inner-page { padding: 16px 16px 40px; }
+  .inner-page-title { font-size: 1.5rem; }
+}
+
+@media (max-width: 768px) {
+  .results-filters { flex-direction: column; align-items: stretch; gap: 10px; }
+  .results-search-wrap { max-width: 100%; width: 100%; }
+  .category-pills {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .category-pills::-webkit-scrollbar { display: none; }
+  .category-pill { font-size: 0.78rem; padding: 5px 12px; white-space: nowrap; }
+  .exercises-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 1024px) {
+  .goal-stats-row { grid-template-columns: repeat(2, 1fr); }
+  .goal-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .goal-hero-card { flex-direction: column; align-items: flex-start; gap: 20px; padding: 22px 20px; }
+  .goal-ring-wrap { align-self: center; }
+  .goal-hero-name { font-size: 1.2rem; }
+  .goal-hero-icon { width: 48px; height: 48px; font-size: 1.4rem; }
+  .goal-stats-row { gap: 10px; }
+  .goal-footer-actions { flex-direction: column; align-items: stretch; }
+  .goal-footer-actions .btn { width: 100%; justify-content: center; }
+}
+@media (max-width: 480px) {
+  .goal-ring-wrap { width: 100px; height: 100px; }
+}
+
+/*progress Page */
+@media (max-width: 1024px) {
+  .prog-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .prog-top-row { grid-template-columns: 1fr; }
+  .prog-ring-card { min-width: 0; }
+  .prog-ring-wrap { width: 90px; height: 90px; }
+  .prog-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .heatmap-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .prog-section-card { padding: 16px; }
+  .prog-section-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+}
+@media (max-width: 480px) {
+  .prog-ring-card { flex-direction: column; align-items: center; text-align: center; }
+}
+
+/* history */
+@media (max-width: 1024px) {
+  .history-stats-row { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .history-stats-row { gap: 10px; }
+  .history-card { flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px; }
+  .history-card-right {
+    width: 100%;
+    justify-content: space-around;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 12px;
+    gap: 8px;
+  }
+  .history-recent-badge { top: -10px; }
+}
+@media (max-width: 480px) {
+  .history-summary-val { font-size: 1.1rem; }
+}
+
+/* dashboard sidebar on mobile*/
+@media (max-width: 900px) {
+  .plan-banner { position: static; }
+  .plan-tabs-wrap { position: static; }
+  .plan-day-content { padding: 16px 14px 0; }
+}
+@media (max-width: 1024px) {
+  .layout-summary { width: 100%; }
+}

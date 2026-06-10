@@ -129,6 +129,7 @@ function mergePlanWithExercises(generatedPlan, filteredExercises) {
       dayNumber: day.dayNumber,
       label: day.label,
       focus: day.focus,
+      completed: false,
       exercises,
     };
   });
