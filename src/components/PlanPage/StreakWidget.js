@@ -21,16 +21,13 @@ export default function StreakWidget({ streak = 0, workedOutToday = false, compa
     return (
       <div style={{
         display: 'inline-flex', alignItems: 'center', gap: '5px',
-        background: state.bg, border: `1px solid ${state.color}33`,
+        background: 'transparent', border: '1px solid var(--border-subtle)',
         borderRadius: '20px', padding: '4px 10px 4px 8px',
       }}>
-        <Flame size={13} strokeWidth={2.5} color={streak === 0 ? '#94a3b8' : state.color} style={{ fill: streak > 2 ? `${state.color}33` : 'none' }} />
-        <span style={{ fontSize: '0.78rem', fontWeight: '700', color: streak === 0 ? '#94a3b8' : state.color }}>
-          {streak > 0 ? `${streak} day${streak !== 1 ? 's' : ''}` : '0'}
+        <Flame size={13} strokeWidth={2.5} color={streak === 0 ? 'var(--text-muted)' : 'var(--text-primary)'} style={{ fill: 'none' }} />
+        <span style={{ fontSize: '0.78rem', fontWeight: '700', color: streak === 0 ? 'var(--text-muted)' : 'var(--text-primary)' }}>
+          {streak}
         </span>
-        {workedOutToday && (
-          <CheckCircle2 size={11} color="var(--accent-success)" />
-        )}
       </div>
     );
   }

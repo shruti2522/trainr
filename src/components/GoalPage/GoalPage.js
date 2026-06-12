@@ -39,7 +39,7 @@ const DURATION_LABELS = {
   '1_3': '1–3 years', over_3: '3+ years',
 };
 
-/* ── Milestone journey (visual path) ──────────────────────────────── */
+
 function MilestoneJourney({ milestones, title }) {
   return (
     <div className="milestone-list" style={{ marginBottom: '24px' }}>
@@ -74,13 +74,13 @@ function MilestoneJourney({ milestones, title }) {
   );
 }
 
-/* ── Next badge spotlight ──────────────────────────────────────────── */
+
 function NextBadgeSpotlight({ unlockedBadgeIds, history, streak, completedQuestLog, xp }) {
   const nextBadge = useMemo(() => {
     const locked = ALL_BADGES.filter(b => !unlockedBadgeIds.includes(b.id));
     if (locked.length === 0) return null;
 
-    // Score each locked badge by "how close"
+    
     const scored = locked.map(badge => {
       let closeness = 0;
       try {
@@ -149,7 +149,7 @@ function NextBadgeSpotlight({ unlockedBadgeIds, history, streak, completedQuestL
   );
 }
 
-/* ── Main component ──────────────────────────────────────────────── */
+
 export default function GoalPage({
   prefs,
   savedPlan,
@@ -180,7 +180,7 @@ export default function GoalPage({
     history.forEach(h => {
       const date = new Date(h.date);
       const weekStart = new Date(date);
-      const dayOffset = (date.getDay() + 6) % 7; // Monday=0
+      const dayOffset = (date.getDay() + 6) % 7; 
       weekStart.setDate(date.getDate() - dayOffset);
       const weekKey = weekStart.toISOString().slice(0, 10);
       weekMap[weekKey] = (weekMap[weekKey] || 0) + 1;
@@ -188,10 +188,10 @@ export default function GoalPage({
     return Object.values(weekMap).filter(count => count >= daysPerWeek).length;
   }, [history, daysPerWeek]);
 
-  // This week's count
+  
   const thisWeekCount = useMemo(() => {
     const today = new Date();
-    const dayOffset = (today.getDay() + 6) % 7; // Monday=0
+    const dayOffset = (today.getDay() + 6) % 7; 
     const weekStart = new Date(today);
     weekStart.setDate(today.getDate() - dayOffset);
     weekStart.setHours(0, 0, 0, 0);
@@ -199,7 +199,7 @@ export default function GoalPage({
     return (history || []).filter(h => h.date >= startStr).length;
   }, [history]);
 
-  // Habit contract summary line
+  
   const habitSummary = useMemo(() => {
     const remaining = Math.max(0, daysPerWeek - thisWeekCount);
     if (thisWeekCount >= daysPerWeek) return { text: 'Week complete! You hit your target.', accent: '#4ade80' };
@@ -207,7 +207,7 @@ export default function GoalPage({
     return { text: `${remaining} more sessions this week to hit your ${daysPerWeek}× goal.`, accent: '#b0b0b0' };
   }, [daysPerWeek, thisWeekCount]);
 
-  // ETA message
+  
   const etaMessage = useMemo(() => {
     if (totalSessions === 0) return null;
     const sessionsPerWeek = daysPerWeek;
@@ -219,7 +219,7 @@ export default function GoalPage({
     return `At your pace, ~${weeksLeft} week${weeksLeft !== 1 ? 's' : ''} to your first major milestone.`;
   }, [totalSessions, daysPerWeek, prefs?.goal]);
 
-  // Build milestone journey
+  
   const { shortTermGoals, longTermGoals } = useMemo(() => {
     const shortItems = [
       { text: 'Complete first workout', done: totalSessions >= 1 },
@@ -268,7 +268,7 @@ export default function GoalPage({
           <p className="inner-page-subtitle">Your mission, your habit, your progress.</p>
         </div>
 
-        {/* ── Hero Goal Card ── */}
+        
         <div className="goal-hero-card">
           <div className="goal-hero-left">
             <div>
@@ -286,7 +286,7 @@ export default function GoalPage({
             </div>
           </div>
 
-          {/* Weekly habit ring */}
+          
           <div className="goal-hero-ring">
             <div style={{ fontSize: '0.65rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.07em', color: 'rgba(255,255,255,0.4)', marginBottom: '10px', textAlign: 'center' }}>
               This Week
@@ -301,7 +301,7 @@ export default function GoalPage({
           </div>
         </div>
 
-        {/* ── Stats Row ── */}
+        
         <div className="goal-stats-row">
           {[
             { label: 'Sessions', value: totalSessions },
@@ -318,7 +318,7 @@ export default function GoalPage({
           })}
         </div>
 
-        {/* ── Milestone Journey ── */}
+        
         <div className="prog-section-card">
           <div className="prog-section-header" style={{ marginBottom: '24px' }}>
             <span className="prog-section-title">Milestones</span>
@@ -327,7 +327,7 @@ export default function GoalPage({
           <MilestoneJourney milestones={longTermGoals} title="Long-term Goals (Lifetime)" />
         </div>
 
-        {/* ── Next Badge Spotlight ── */}
+        
         <NextBadgeSpotlight
           unlockedBadgeIds={unlockedBadgeIds}
           history={history}
@@ -336,7 +336,7 @@ export default function GoalPage({
           xp={xp}
         />
 
-        {/* ── Achievements Grid ── */}
+        
         <div className="prog-section-card">
           <div className="prog-section-header">
             <span className="prog-section-title">Achievements</span>
@@ -369,7 +369,7 @@ export default function GoalPage({
           </div>
         </div>
 
-        {/* ── Training Profile ── */}
+        
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '28px' }}>
           <div style={{ background: 'var(--bg-surface)', borderRadius: '16px', padding: '20px 24px', border: '1px solid var(--border-subtle)' }}>
             <div style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text-muted)', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -403,7 +403,7 @@ export default function GoalPage({
             </div>
           </div>
 
-          {/* Focus Areas */}
+          
           <div style={{ background: 'var(--bg-surface)', borderRadius: '16px', padding: '20px 24px', border: '1px solid var(--border-subtle)' }}>
             <div style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text-muted)', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
               Focus Areas
@@ -427,7 +427,7 @@ export default function GoalPage({
             </div>
           </div>
 
-          {/* Equipment */}
+          
           {prefs?.equipment?.length > 0 && (
             <div style={{ background: 'var(--bg-surface)', borderRadius: '16px', padding: '20px 24px', border: '1px solid var(--border-subtle)' }}>
               <div style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text-muted)', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -443,7 +443,7 @@ export default function GoalPage({
             </div>
           )}
 
-          {/* Injuries */}
+          
           {injuries.length > 0 && (
             <div style={{ background: 'var(--bg-surface)', borderRadius: '16px', padding: '20px 24px', border: '1px solid var(--border-subtle)' }}>
               <div style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text-muted)', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -460,7 +460,7 @@ export default function GoalPage({
           )}
         </div>
 
-        {/* Footer Actions */}
+        
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <button className="btn btn-primary" onClick={() => onViewChange('results')}>
             View My Plan

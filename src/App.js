@@ -59,7 +59,7 @@ function App() {
   const [unlockedBadges, setUnlockedBadges] = useLocalStorage('fs_badges', []);
   const [newBadgeQueue, setNewBadgeQueue] = useState([]);
   
-  // New habit-first model state
+  
   const [habitContract, setHabitContract] = useLocalStorage('fs_habitContract', null);
   const [currentWeek, setCurrentWeek] = useLocalStorage('fs_currentWeek', null);
   const [momentum, setMomentum] = useLocalStorage('fs_momentum', null);
@@ -69,11 +69,11 @@ function App() {
   const [isMobile, setIsMobile] = useState(false);
   const prevIsMobile = useRef(null);
 
-  // Derived state
+  
   const streak = calculateStreak(history);
   const totalXP = calculateTotalXP(history, completedQuests);
 
-  // Check for newly unlocked badges whenever history/streak/quests change
+  
   useEffect(() => {
     if (!history) return;
     const currentUnlocked = getUnlockedBadges(history, streak, completedQuests);
@@ -88,7 +88,7 @@ function App() {
   }, [history, streak, completedQuests, unlockedBadges, setUnlockedBadges]);
 
 
-  // Fetch exercises on component mount
+  
   useEffect(() => {
     const fetchExercises = async () => {
       try {
@@ -130,13 +130,13 @@ function App() {
     setWorkoutElapsed(0);
     const daysPerWeek = parseInt(preferences.frequency) || 3;
     
-    // Parse sessionDuration (e.g., "45_60" -> 45, "30_45" -> 30)
+    
     const durationRange = preferences.sessionDuration || '45_60';
     const sessionLength = parseInt(durationRange.split('_')[0]) || 45;
     
     const today = new Date();
     const day = today.getDay();
-    // Starter period if user signs up Wednesday through Sunday
+    
     const isStarterPeriod = day === 0 || day >= 3;
     const initialCommitment = isStarterPeriod ? 1 : daysPerWeek;
 
@@ -211,7 +211,7 @@ function App() {
       if (!prev) return prev;
       return prev.map(d => d.key === sessionDay.key ? { ...d, completed: true } : d);
     });
-    // Record in history
+    
     if (sessionDay) {
       const muscles = [...new Set(
         (sessionDay.exercises ?? []).flatMap(ex => ex.primaryMuscles ?? [])
@@ -238,7 +238,7 @@ function App() {
     setView('results');
   }, [setSessionDay, setView]);
 
-  // Shared sidebar props for all dashboard pages
+  
   const sidebarProps = {
     sidebarOpen: isSidebarOpen,
     onToggleSidebar: () => setIsSidebarOpen(v => !v),
@@ -248,7 +248,7 @@ function App() {
     xp: totalXP,
   };
 
-  // Function to handle manual quest completion
+  
   const handleCompleteQuest = useCallback((questId) => {
     setCompletedQuests(prev => [
       ...(prev || []),
@@ -353,7 +353,7 @@ function App() {
         ) : null}
       </main>
 
-      {/* Render the next badge in queue if any */}
+      
       {newBadgeQueue.length > 0 && (
         <BadgeToast
           badge={newBadgeQueue[0]}

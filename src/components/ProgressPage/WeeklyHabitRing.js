@@ -1,22 +1,6 @@
 import React, { useMemo } from 'react';
 
-/**
- * WeeklyHabitRing
- * Shows habit completion using a rolling 7-day window anchored to the
- * user's onboarding day-of-week (from habitContract.confirmedAt).
- *
- * Industry strategy: apps like Duolingo and Streaks anchor the week to the
- * user's join day rather than a fixed calendar boundary. This avoids the
- * demoralising "0/N" reset when someone joins mid-week (e.g. on a Friday).
- * Their window is always Fri→Thu, every reset feels earned.
- *
- * Props:
- *  history     — full workout history array ({ date: 'YYYY-MM-DD' })
- *  daysPerWeek — sessions committed per 7-day window
- *  startDate   — ISO date string from habitContract.confirmedAt
- *  size        — 'sm' | 'md' | 'lg'  (default 'md')
- *  showLabel   — render text summary below ring
- */
+
 export default function WeeklyHabitRing({
   history = [],
   daysPerWeek = 3,
@@ -28,10 +12,10 @@ export default function WeeklyHabitRing({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Industry strategy: Monday reset
-    const anchorDOW = 1; // Monday
+    
+    const anchorDOW = 1; 
 
-    // Roll back to the most recent anchorDOW at or before today
+    
     const todayDOW = today.getDay();
     const daysBack = (todayDOW - anchorDOW + 7) % 7;
     const windowStart = new Date(today);
@@ -54,7 +38,7 @@ export default function WeeklyHabitRing({
   const historyDates = useMemo(() => new Set((history || []).map(h => h.date)), [history]);
   const isComplete = completed >= daysPerWeek;
 
-  // Size config
+  
   const cfg = {
     sm: { r: 32, strokeW: 6,  size: 80,  fontSize: '1rem',   subSize: '0.6rem' },
     md: { r: 48, strokeW: 8,  size: 112, fontSize: '1.5rem', subSize: '0.7rem' },
@@ -72,7 +56,7 @@ export default function WeeklyHabitRing({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
 
-      {/* ── Progress ring ── */}
+      
       <div style={{ position: 'relative', width: cfg.size, height: cfg.size, flexShrink: 0 }}>
         <svg width={cfg.size} height={cfg.size} viewBox={`0 0 ${cfg.size} ${cfg.size}`}>
           <circle
@@ -111,7 +95,7 @@ export default function WeeklyHabitRing({
         </div>
       </div>
 
-      {/* ── Day slots — clean dots, no glow ── */}
+      
       <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
         {slots.map((date, i) => {
           const done = historyDates.has(date);
@@ -150,7 +134,7 @@ export default function WeeklyHabitRing({
         })}
       </div>
 
-      {/* ── Status label ── */}
+      
       {showLabel && (
         <div style={{ textAlign: 'center' }}>
           {isComplete ? (

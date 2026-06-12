@@ -11,12 +11,12 @@ import DashboardLayout from "../Layout/DashboardLayout";
 import StreakWidget from './StreakWidget';
 import DailyQuestCard from './DailyQuestCard';
 import { getDailyQuests, isQuestDoneToday } from '../../utils/xp';
-import { Trophy, Plus, CheckCircle2 } from 'lucide-react';
+import { Trophy, Plus, CheckCircle2, Check } from 'lucide-react';
 
 const DAY_LABELS = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];
 
 const G = '#4ade80';               
-const G_DIM = 'rgba(74,222,128,0.1)';  // badge fill
+const G_DIM = 'rgba(74,222,128,0.1)';  
 const G_BORDER = 'rgba(74,222,128,0.2)'; 
 const WHITE_60 = 'rgba(255,255,255,0.6)';
 const WHITE_40 = 'rgba(255,255,255,0.4)';
@@ -133,7 +133,7 @@ export default function PlanPage({
     return () => controller.abort();
   }, [filtered, prefs, level, score, savedPlan, setSavedPlan]);
 
-  // Navigate to commitment page after plan finishes loading
+  
   useEffect(() => {
     if (showCommitmentAfterPlan && savedPlan && !isLoading) {
       onViewChange('commitment');
@@ -233,10 +233,18 @@ export default function PlanPage({
     });
   }
 
-  // ─── Right Summary Panel ───────────────────────────────────────────────────
+  
   const totalExercisesCount = sessionExercises.length;
-  const completedExercisesCount = currentDay?.completed ? totalExercisesCount : Math.min(currentStepIdx, totalExercisesCount);
-  const progressPct = totalExercisesCount > 0 ? Math.round((completedExercisesCount / totalExercisesCount) * 100) : 0;
+  
+  const steps = sessionExercises.flatMap((ex, ei) =>
+    Array.from({ length: ex.sets || 1 }, (_, si) => ({ ei }))
+  );
+  const currentStep = steps[currentStepIdx] || steps[steps.length - 1] || { ei: 0 };
+  const completedExercisesCount = currentDay?.completed ? totalExercisesCount : currentStep.ei;
+  
+  const progressPct = currentDay?.completed 
+    ? 100 
+    : steps.length > 0 ? Math.round((currentStepIdx / steps.length) * 100) : 0;
   const ringR = 36;
   const ringCirc = 2 * Math.PI * ringR;
   const ringOffset = ringCirc - (ringCirc * progressPct) / 100;
@@ -245,13 +253,13 @@ export default function PlanPage({
 
   const summaryPanel = (
     <>
-      {/* ── Session Progress Ring ─────────────────────────────────────── */}
+      
       <div className="plan-progress-ring">
         <div className="plan-ring-wrap">
           <svg width="80" height="80" viewBox="0 0 80 80">
-            {/* Track */}
+            
             <circle cx="40" cy="40" r={ringR} fill="none" stroke={WHITE_10} strokeWidth="7" />
-            {/* Progress arc — green */}
+            
             <circle
               cx="40" cy="40" r={ringR} fill="none"
               stroke={currentDay?.completed ? G : G}
@@ -267,9 +275,7 @@ export default function PlanPage({
           <p className="plan-ring-label">Session Progress</p>
           <p className="plan-ring-session">{currentDay?.label || 'Today'}</p>
           <div>
-            {currentDay?.completed ? (
-              <span className="plan-ring-badge">✓ Complete</span>
-            ) : currentStepIdx > 0 ? (
+            {currentDay?.completed ? null : currentStepIdx > 0 ? (
               <span style={{ fontSize: '0.72rem', color: WHITE_40 }}>
                 {completedExercisesCount} / {totalExercisesCount} done
               </span>
@@ -282,11 +288,45 @@ export default function PlanPage({
         </div>
       </div>
 
-      {/* ── Daily Quests ─────────────────────────────────────────────── */}
+      
+      <div style={{ marginBottom: '16px' }}>
+        <p style={{ fontSize: '0.68rem', fontWeight: '700', color: WHITE_40, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>
+          Mode
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+          {[
+            { key: 'full',     label: 'Full session', desc: `${currentDay?.exercises?.length || 0} ex · ~${Math.round(currentDay?.exercises?.reduce((s, ex) => s + ((ex?.sets || 0) * ((ex?.reps || 10) * 4 + (ex?.restSeconds || 60))), 0) / 60) || 0} min`, badge: 'Recommended' },
+            { key: 'quick',    label: 'Quick',        desc: '3 exercises · ~12 min' },
+            { key: 'recovery', label: 'Recovery',     desc: 'Stretch only · ~10 min' },
+          ].map((mode) => {
+            const isActive = sessionMode === mode.key;
+            return (
+              <button
+                key={mode.key}
+                onClick={() => setSessionMode(mode.key)}
+                className={`plan-mode-row ${isActive ? 'active' : ''}`}
+              >
+                <div className="plan-mode-radio"><div className="plan-mode-radio-dot"></div></div>
+                <div className="plan-mode-info">
+                  <div className="plan-mode-name">
+                    {mode.label}
+                    {mode.badge && <span className="plan-mode-badge">{mode.badge}</span>}
+                  </div>
+                  <div className="plan-mode-detail">{mode.desc}</div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      
+      <div style={{ height: '1px', background: WHITE_10, marginBottom: '16px' }} />
+
+      
       <div style={{ marginBottom: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Trophy size={12} color={G} />
             <p style={{ fontSize: '0.68rem', fontWeight: '700', color: WHITE_40, textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
               Daily Quests
             </p>
@@ -317,42 +357,7 @@ export default function PlanPage({
         </div>
       </div>
 
-      {/* ── Divider ──────────────────────────────────────────────────── */}
-      <div style={{ height: '1px', background: WHITE_10, marginBottom: '16px' }} />
-
-      {/* ── Session Mode Picker ───────────────────────────────────────── */}
-      <div style={{ marginBottom: '16px' }}>
-        <p style={{ fontSize: '0.68rem', fontWeight: '700', color: WHITE_40, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>
-          Mode
-        </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-          {[
-            { key: 'full',     label: 'Full session', desc: `${currentDay?.exercises?.length || 0} ex · ~${Math.round(currentDay?.exercises?.reduce((s, ex) => s + ((ex?.sets || 0) * ((ex?.reps || 10) * 4 + (ex?.restSeconds || 60))), 0) / 60) || 0} min`, badge: 'REC' },
-            { key: 'quick',    label: 'Quick',        desc: '3 exercises · ~12 min' },
-            { key: 'recovery', label: 'Recovery',     desc: 'Stretch only · ~10 min' },
-          ].map((mode) => {
-            const isActive = sessionMode === mode.key;
-            return (
-              <button
-                key={mode.key}
-                onClick={() => setSessionMode(mode.key)}
-                className={`plan-mode-row ${isActive ? 'active' : ''}`}
-              >
-                <div className="plan-mode-radio"><div className="plan-mode-radio-dot"></div></div>
-                <div className="plan-mode-info">
-                  <div className="plan-mode-name">
-                    {mode.label}
-                    {mode.badge && isActive && <span className="plan-mode-badge">{mode.badge}</span>}
-                  </div>
-                  <div className="plan-mode-detail">{mode.desc}</div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* ── Muscles Targeted ─────────────────────────────────────────── */}
+      
       {muscleCoverage.length > 0 && (
         <>
           <div style={{ height: '1px', background: WHITE_10, marginBottom: '16px' }} />
@@ -392,7 +397,7 @@ export default function PlanPage({
     >
       <div className="plan-page animate-fade-in" style={{ padding: '20px 24px', maxWidth: '100%' }}>
 
-        {/* ── Page Header ─────────────────────────────────────────────────── */}
+        
         <div className="plan-page-header">
           <div className="plan-page-title-group">
             <h1 className="plan-page-title">Your Weekly Plan</h1>
@@ -401,13 +406,13 @@ export default function PlanPage({
               <span>/</span>
               {goalLabel && <span>{goalLabel}</span>}
               {goalLabel && <span>/</span>}
-              <span>{dayCount} days/week</span>
+              <span>{dayCount} days a week</span>
             </div>
           </div>
           <StreakWidget streak={streak} workedOutToday={workedOutToday} compact />
         </div>
 
-        {/* ── Weekly Day Strip ─────────────────────────────────────────────── */}
+        
         <div className="plan-day-tabs">
           {savedPlan.map((day, i) => {
             const dayLabel = DAY_LABELS[i] || `D${i + 1}`;
@@ -420,23 +425,20 @@ export default function PlanPage({
                 className={`plan-day-tab ${isActive ? 'active' : ''}`}
               >
                 <span>{dayLabel}</span>
-                {isDone && <div className="plan-day-tab-dot" />}
+                {isDone && <Check size={12} strokeWidth={3} color="currentColor" style={{ marginLeft: '4px' }} />}
               </button>
             );
           })}
         </div>
 
-        {/* ── Day Summary Bar ──────────────────────────────────────────────── */}
+        
         {currentDay && (
           <div className="plan-day-summary">
-            {/* Left — title + meta */}
+            
             <div className="plan-day-summary-left">
               <div className="plan-day-summary-info">
                 <h3>
                   {currentDay.label}
-                  {currentDay.completed && (
-                    <span className="plan-day-summary-badge">✓ DONE</span>
-                  )}
                 </h3>
                 <p className="plan-day-summary-meta">
                   Day {currentDay.dayNumber} · {currentDay.exercises?.length} exercises · ~{estMinutes} min
@@ -444,7 +446,7 @@ export default function PlanPage({
               </div>
             </div>
 
-            {/* Right — stats + button */}
+            
             <div className="plan-day-summary-right">
               <div className="plan-day-summary-stats">
                 {[
@@ -471,16 +473,13 @@ export default function PlanPage({
           </div>
         )}
 
-        {/* ── Exercise List Header ─────────────────────────────────────────── */}
+        
         {currentDay && (
           <div className="plan-ex-list-header">
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span className="plan-ex-count">
                 {currentDay.exercises?.length} Exercises
               </span>
-              {currentDay.completed && (
-                <CheckCircle2 size={15} color={G} />
-              )}
             </div>
             <div className="plan-ex-actions-header">
               <button
@@ -504,7 +503,7 @@ export default function PlanPage({
           </div>
         )}
 
-        {/* ── Exercise List ────────────────────────────────────────────────── */}
+        
         {currentDay && (
           <>
             {sessionExercises.length === 0 ? (
@@ -530,6 +529,7 @@ export default function PlanPage({
                       onDragEnter={isReordering ? handleDragEnter : undefined}
                       onDragEnd={isReordering ? handleDragEnd : undefined}
                       caloriesBurned={kcal}
+                      onStartFromHere={() => onStartSession({ ...currentDay, exercises: sessionExercises, startExerciseIdx: exIdx })}
                     />
                   );
                 })}

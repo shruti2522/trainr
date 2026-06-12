@@ -32,7 +32,7 @@ export default function DailyQuestCard({ quest, isDone, onComplete, compact = fa
           width: '26px', height: '26px', borderRadius: '6px', flexShrink: 0,
           background: isDone ? 'var(--accent-success)' : 'var(--bg-elevated)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: isDone ? '#fff' : 'var(--text-muted)',
+          color: isDone ? 'var(--bg-surface)' : 'var(--text-muted)',
         }}>
           {isDone ? <Check size={13} strokeWidth={3} /> : <Trophy size={13} strokeWidth={2.5} />}
         </div>
@@ -48,7 +48,7 @@ export default function DailyQuestCard({ quest, isDone, onComplete, compact = fa
         </div>
         <span style={{
           fontSize: '0.65rem', fontWeight: '700',
-          color: isDone ? 'var(--text-muted)' : '#d97706',
+          color: isDone ? 'var(--text-muted)' : '#4ade80',
           flexShrink: 0,
         }}>
           +{quest.xp}
@@ -78,7 +78,7 @@ export default function DailyQuestCard({ quest, isDone, onComplete, compact = fa
         width: '36px', height: '36px', borderRadius: '8px',
         background: isDone ? 'var(--accent-success)' : 'var(--bg-elevated)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        color: isDone ? '#fff' : 'var(--text-secondary)',
+        color: isDone ? 'var(--bg-surface)' : 'var(--text-secondary)',
         transition: 'all 0.3s', flexShrink: 0,
       }}>
         {isDone ? <Check size={20} strokeWidth={3} /> : <Trophy size={18} strokeWidth={2.5} />}
@@ -105,11 +105,11 @@ export default function DailyQuestCard({ quest, isDone, onComplete, compact = fa
       </div>
       <div style={{
         display: 'flex', alignItems: 'center', gap: '4px',
-        background: isDone ? 'var(--bg-elevated)' : '#fef3c7',
-        border: `1px solid ${isDone ? 'var(--border-subtle)' : '#fde68a'}`,
+        background: isDone ? 'var(--bg-elevated)' : 'rgba(74,222,128,0.1)',
+        border: `1px solid ${isDone ? 'var(--border-subtle)' : 'rgba(74,222,128,0.2)'}`,
         padding: '4px 10px', borderRadius: '20px', flexShrink: 0,
       }}>
-        <span style={{ fontSize: '0.7rem', fontWeight: '800', color: isDone ? 'var(--text-secondary)' : '#d97706' }}>
+        <span style={{ fontSize: '0.7rem', fontWeight: '800', color: isDone ? 'var(--text-secondary)' : '#4ade80' }}>
           +{quest.xp} XP
         </span>
       </div>

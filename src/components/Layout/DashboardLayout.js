@@ -19,7 +19,7 @@ export default function DashboardLayout({
   return (
     <div className={`layout-3col animate-fade-in ${!sidebarOpen && !isMobile ? 'desktop-collapsed' : ''}`}>
 
-      {/* mobile Header */}
+      
       <div className="mobile-header">
         <button
           className="mobile-menu-btn"
@@ -38,7 +38,7 @@ export default function DashboardLayout({
         </button>
       </div>
 
-    {/*mobile*/}
+    
       {sidebarOpen && isMobile && (
         <div className="sidebar-backdrop" onClick={onCloseSidebar} />
       )}

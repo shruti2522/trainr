@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { formatCategoryLabel, getExerciseImageUrl } from '../../utils/helpers';
 import PickExerciseModal from './PickExerciseModal';
-import { GripVertical, Check } from 'lucide-react';
+import { GripVertical, Check, Play } from 'lucide-react';
 
-export default function ExerciseRow({ exercise, index, isCompleted, filteredPool, onShuffle, onDelete, onPick, isReordering, onDragStart, onDragEnter, onDragEnd, caloriesBurned }) {
+export default function ExerciseRow({ exercise, index, isCompleted, filteredPool, onShuffle, onDelete, onPick, isReordering, onDragStart, onDragEnter, onDragEnd, caloriesBurned, onStartFromHere }) {
   const [showPicker, setShowPicker] = useState(false);
   const [imgError, setImgError] = useState(false);
 
@@ -76,7 +76,7 @@ export default function ExerciseRow({ exercise, index, isCompleted, filteredPool
                 <span className="meta-divider">|</span>
                 <span style={{
                   display: 'inline-flex', alignItems: 'center', gap: '3px',
-                  color: '#059669', fontSize: '0.75rem', fontWeight: '700',
+                  color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: '700',
                 }}>
                   ~{caloriesBurned} kcal
                 </span>
@@ -92,6 +92,16 @@ export default function ExerciseRow({ exercise, index, isCompleted, filteredPool
         </div>
 
         <div className="ex-row-actions">
+          {onStartFromHere && !isReordering && (
+            <button
+              className="ex-action-btn ex-play-btn"
+              title="Start session from this exercise"
+              onClick={() => onStartFromHere(index)}
+              aria-label="Start from here"
+            >
+              <Play size={16} style={{ marginLeft: '2px' }} fill="currentColor" />
+            </button>
+          )}
           <button
             className="ex-action-btn"
             title="Shuffle - swap with a random similar exercise"

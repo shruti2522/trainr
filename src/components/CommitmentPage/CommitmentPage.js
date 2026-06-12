@@ -31,10 +31,10 @@ export default function CommitmentPage({
 
   const today = new Date(habitContract.confirmedAt || Date.now());
   const day = today.getDay();
-  // Wed-Sun (3, 4, 5, 6, 0)
+  
   const isStarterPeriod = day === 0 || day >= 3;
 
-  // Show the full selected range, not just the floor integer
+  
   const SESSION_RANGE_LABELS = {
     '20_30':   '20–30',
     '30_45':   '30–45',
@@ -61,7 +61,7 @@ export default function CommitmentPage({
         </div>
 
         <div className="commitment-wrap commitment-split-layout">
-          {/* Left Column */}
+          
           <div className="commitment-left-col">
             <div className="commitment-header">
               <div className="commitment-eyebrow">Week {weekNumber} · Starting out</div>
@@ -83,7 +83,7 @@ export default function CommitmentPage({
             </div>
           </div>
 
-          {/* Right Column */}
+          
           <div className="commitment-right-col">
             <div>
               {isStarterPeriod && weekNumber === 1 && (

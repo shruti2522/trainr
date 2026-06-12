@@ -106,7 +106,7 @@
   color: var(--commitment-text-dim);
 }
 
-/* ── MAIN ───────────────────────────────── */
+
 
 .commitment-main {
   width: 100%;
@@ -329,7 +329,7 @@
   color: var(--commitment-text);
   border-color: rgba(255,255,255,0.2);
 }
-/*mobile*/
+
 
 .commitment-mobile-bar {
   display: none;

@@ -1,19 +1,16 @@
-// ─────────────────────────────────────────────────────────────
-// Trainr — xp Engine
-// ─────────────────────────────────────────────────────────────
 
-// ── Streak ────────────────────────────────────────────────────
-/**
- * Calculate the current workout streak from history.
- * Streak = consecutive days ending today or yesterday.
- */
+
+
+
+
+
 export function calculateStreak(history) {
   if (!history || history.length === 0) return 0;
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Unique dates, sorted newest first
+  
   const uniqueDates = [...new Set(history.map(h => h.date))]
     .map(d => { const dt = new Date(d); dt.setHours(0,0,0,0); return dt; })
     .sort((a, b) => b - a);
@@ -34,13 +31,13 @@ export function calculateStreak(history) {
   return streak;
 }
 
-/** True if the user has completed a session today */
+
 export function hasWorkedOutToday(history) {
   const today = new Date().toISOString().slice(0, 10);
   return (history || []).some(h => h.date === today);
 }
 
-// ── XP & Levels ───────────────────────────────────────────────
+
 export const LEVELS = [
   { index: 0, name: 'Rookie',   icon: 'seedling', color: '#64748b', minXP: 0,    maxXP: 150  },
   { index: 1, name: 'Athlete',  icon: 'zap',      color: '#3b82f6', minXP: 150,  maxXP: 400  },
@@ -79,7 +76,7 @@ export function getLevelProgress(xp) {
   return { level: lvl, pct, current, needed };
 }
 
-// ── Badges ────────────────────────────────────────────────────
+
 export const ALL_BADGES = [
   {
     id: 'first_spark',
@@ -204,27 +201,27 @@ export function getUnlockedBadges(history, streak, completedQuestLog) {
   }).map(b => b.id);
 }
 
-// ── Daily Quests ──────────────────────────────────────────────
+
 const QUEST_POOL = [
-  // Always available
+  
   { id: 'complete_session', title: 'Complete today\'s session', desc: 'Finish your full workout plan for today', xp: 25, icon: 'dumbbell', autoComplete: true },
-  // Volume
+  
   { id: 'hit_50_reps',    title: 'Hit 50 total reps',       desc: 'Rack up 50 reps across all exercises today',  xp: 15, icon: 'activity', autoComplete: false },
   { id: 'burn_150_kcal',  title: 'Burn 150+ kcal',          desc: 'Torch at least 150 calories in your session', xp: 20, icon: 'flame', autoComplete: false },
-  // Mode quests
+  
   { id: 'try_recovery',   title: 'Recovery day',             desc: 'Complete a stretch-only Recovery session',     xp: 15, icon: 'heart', autoComplete: false },
   { id: 'try_quick',      title: 'Lightning round',          desc: 'Knock out a Quick session today',             xp: 15, icon: 'zap', autoComplete: false },
-  // Consistency
+  
   { id: 'no_skip',        title: 'No rest for the driven',   desc: 'Show up and complete at least one set',        xp: 10, icon: 'check-circle', autoComplete: true },
-  // Streak
+  
   { id: 'streak_3',       title: 'Build a 3-day streak',     desc: 'Work out 3 days in a row',                    xp: 30, icon: 'trending-up', streakRequired: 3, autoComplete: true },
   { id: 'streak_7',       title: 'Hit a 7-day streak',       desc: 'Maintain 7 consecutive workout days',          xp: 100, icon: 'star', streakRequired: 7, autoComplete: true },
-  // Exploration
+  
   { id: 'add_exercise',   title: 'Customise your plan',      desc: 'Add a new exercise to today\'s session',      xp: 10, icon: 'plus-circle', autoComplete: false },
   { id: 'shuffle_one',    title: 'Mix it up',                desc: 'Shuffle at least one exercise today',          xp: 10, icon: 'shuffle', autoComplete: false },
 ];
 
-// Deterministic daily seeder (same quests all day, change at midnight)
+
 function seededRandom(seed, n) {
   return Math.floor(Math.abs(Math.sin(seed + n) * 1000000)) % 1000000;
 }
@@ -235,14 +232,14 @@ export function getDailyQuests(dateStr) {
     .split('')
     .reduce((a, c, i) => a * 31 + c.charCodeAt(0) + i, 7);
 
-  // Quest 1: always "complete_session"
+  
   const q1 = QUEST_POOL[0];
 
-  // Quest 2: volume / mode / exploration
+  
   const pool2 = QUEST_POOL.filter(q => ['hit_50_reps', 'burn_150_kcal', 'try_recovery', 'try_quick', 'add_exercise', 'shuffle_one'].includes(q.id));
   const q2 = pool2[seededRandom(seed, 1) % pool2.length];
 
-  // Quest 3: streak / consistency (different from q1, q2)
+  
   const pool3 = QUEST_POOL.filter(q =>
     ['no_skip', 'streak_3', 'streak_7'].includes(q.id) &&
     q.id !== q1.id && q.id !== q2?.id
@@ -252,24 +249,24 @@ export function getDailyQuests(dateStr) {
   return [q1, q2, q3].filter(Boolean);
 }
 
-/** Check if a specific quest is completed today */
+
 export function isQuestDoneToday(questId, completedQuestLog, history, streak) {
   const today = new Date().toISOString().slice(0, 10);
 
-  // Auto-detect streak-based quests
+  
   const quest = QUEST_POOL.find(q => q.id === questId);
   if (quest?.streakRequired) return streak >= quest.streakRequired;
 
-  // Auto-detect session-based quests
+  
   if (['complete_session', 'no_skip'].includes(questId)) {
     return (history || []).some(h => h.date === today);
   }
 
-  // Manual quests — check log
+  
   return (completedQuestLog || []).some(e => e.date === today && e.questId === questId);
 }
 
-/** Get today's completed quest IDs */
+
 export function getTodayCompletedQuestIds(completedQuestLog, history, streak) {
   const today = new Date().toISOString().slice(0, 10);
   const quests = getDailyQuests(today);

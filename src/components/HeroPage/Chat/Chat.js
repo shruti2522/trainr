@@ -87,7 +87,7 @@ export default function Chat({ onComplete }) {
     frequency: '3',
     sessionDuration: '45_60',
     equipment: ['No equipment (bodyweight)'],
-    injuries: [], // defaulting empty since we're keeping it concise
+    injuries: [], 
     weeklyTime: '2_4h'
   });
 
@@ -135,7 +135,7 @@ export default function Chat({ onComplete }) {
   const processAnswer = (answerText) => {
     appendUserMessage(answerText);
     
-    // Find if it matches a chip, else use fallback mapping for robustness
+    
     const currentStepConfig = STEPS[step];
     const matchedChip = currentStepConfig.chips.find(
       c => c.label.toLowerCase() === answerText.toLowerCase()
@@ -161,7 +161,7 @@ export default function Chat({ onComplete }) {
         );
       }, 600);
     } else {
-      // Completed!
+      
       setStep(TOTAL_STEPS);
       setIsTyping(true);
       setTimeout(() => {
@@ -174,15 +174,15 @@ export default function Chat({ onComplete }) {
     }
   };
 
-  // Removed ephemeral recap logic
+  
 
   const knownFacts = Object.entries(prefs).filter(([k, v]) => {
-    // Only show interesting known facts
+    
     if (k === 'injuries' || k === 'weeklyTime') return false;
     const stepConfig = STEPS.find(s => s.key === k);
     if (!stepConfig) return false;
     
-    // Check if it's the fallback or a default we haven't asked about yet
+    
     const currentStepIndex = STEPS.findIndex(s => s.key === k);
     if (currentStepIndex >= step) return false;
     

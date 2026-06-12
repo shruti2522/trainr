@@ -15,7 +15,7 @@ const LEVEL_ICON_MAP = {
   trophy: Trophy,
 };
 
-/* ── Week consistency timeline ─────────────────────────────────────── */
+
 function WeekConsistencyBar({ history, daysPerWeek, startDate }) {
   const weeks = useMemo(() => {
     if (!history || history.length === 0) return [];
@@ -23,7 +23,7 @@ function WeekConsistencyBar({ history, daysPerWeek, startDate }) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Use same anchor as WeeklyHabitRing: the user's onboarding day-of-week
+    
     let anchorDOW = 0;
     if (startDate) {
       const d = new Date(startDate);
@@ -34,7 +34,7 @@ function WeekConsistencyBar({ history, daysPerWeek, startDate }) {
     const results = [];
 
     for (let w = NUM_WEEKS - 1; w >= 0; w--) {
-      // Find the start of this rolling window
+      
       const todayDOW = today.getDay();
       const daysBack = (todayDOW - anchorDOW + 7) % 7 + w * 7;
       const weekStart = new Date(today);
@@ -89,7 +89,7 @@ function WeekConsistencyBar({ history, daysPerWeek, startDate }) {
   );
 }
 
-/* ── Heatmap ───────────────────────────────────────────────────────── */
+
 function WeekHeatmap({ history }) {
   const days = useMemo(() => {
     const today = new Date();
@@ -133,7 +133,7 @@ function WeekHeatmap({ history }) {
   );
 }
 
-/* ── Muscle bar ────────────────────────────────────────────────────── */
+
 function MuscleBar({ muscle, percentage }) {
   return (
     <div className="prog-muscle-row">
@@ -146,7 +146,7 @@ function MuscleBar({ muscle, percentage }) {
   );
 }
 
-/* ── XP Level bar ──────────────────────────────────────────────────── */
+
 function XPLevelBar({ xp }) {
   const { level, pct, current, needed } = getLevelProgress(xp || 0);
   const nextLevel = LEVELS[level.index + 1];
@@ -187,7 +187,7 @@ function XPLevelBar({ xp }) {
   );
 }
 
-/* ── Main component ────────────────────────────────────────────────── */
+
 export default function ProgressPage({
   savedPlan,
   history,
@@ -246,7 +246,7 @@ export default function ProgressPage({
     return Object.values(weekMap).filter(count => count >= daysPerWeek).length;
   }, [history, daysPerWeek]);
 
-  // Momentum message
+  
   const momentumMsg = useMemo(() => {
     if (streak === 0 && (history?.length ?? 0) === 0) return null;
     if (streak >= 14) return { icon: null, text: `${streak}-day streak — you're on fire! Don't stop now.`, accent: '#f97316' };
@@ -272,7 +272,7 @@ export default function ProgressPage({
           <p className="inner-page-subtitle">Your habit, week by week.</p>
         </div>
 
-        {/* ── Momentum message ── */}
+        
         {momentumMsg && (
           <div className="prog-momentum-msg" style={{ borderLeftColor: momentumMsg.accent }}>
             <span style={{ fontSize: '1.2rem' }}>{momentumMsg.icon}</span>
@@ -280,7 +280,7 @@ export default function ProgressPage({
           </div>
         )}
 
-        {/* ── Hero: Weekly habit ring + stats ── */}
+        
         <div className="prog-hero-row">
           <div className="prog-habit-hero">
             <div className="prog-habit-hero-label">This Week's Habit</div>
@@ -314,17 +314,17 @@ export default function ProgressPage({
           </div>
         </div>
 
-        {/* ── Week consistency timeline ── */}
+        
         {history && history.length > 0 && (
           <div className="prog-section-card">
             <WeekConsistencyBar history={history} daysPerWeek={daysPerWeek} startDate={habitContract?.confirmedAt} />
           </div>
         )}
 
-        {/* ── XP Level bar ── */}
+        
         <XPLevelBar xp={xp} />
 
-        {/* ── Heatmap ── */}
+        
         <div className="prog-section-card">
           <div className="prog-section-header">
             <span className="prog-section-title">Activity — Last 12 Weeks</span>
@@ -343,7 +343,7 @@ export default function ProgressPage({
           )}
         </div>
 
-        {/* ── Muscle Coverage ── */}
+        
         <div className="prog-section-card">
           <div className="prog-section-header">
             <span className="prog-section-title">Muscles Trained</span>
