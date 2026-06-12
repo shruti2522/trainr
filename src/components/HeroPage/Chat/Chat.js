@@ -40,7 +40,7 @@ const STEPS = [
   },
   {
     key: 'frequency',
-    question: "Great. How many days a week can you realistically commit to training?",
+    question: "How many days a week can you realistically commit to training?",
     chips: [
       { label: "2 days", value: "2" },
       { label: "3 days", value: "3" },
@@ -152,6 +152,9 @@ export default function Chat({ onComplete }) {
       setIsTyping(true);
       setTimeout(() => {
         setIsTyping(false);
+        if (nextStep === 3) {
+          appendBotMessage("Awesome, we've got your foundation. Let's talk schedule.");
+        }
         appendBotMessage(
           STEPS[nextStep].question,
           STEPS[nextStep].chips.map(c => c.label)
@@ -171,13 +174,7 @@ export default function Chat({ onComplete }) {
     }
   };
 
-  // Recap logic: occasionally summarize to make it feel natural
-  const recapText = useMemo(() => {
-    if (step === 3 && !isTyping) {
-      return "Awesome, we've got your foundation. Let's talk schedule.";
-    }
-    return null;
-  }, [step, isTyping]);
+  // Removed ephemeral recap logic
 
   const knownFacts = Object.entries(prefs).filter(([k, v]) => {
     // Only show interesting known facts
@@ -220,12 +217,6 @@ export default function Chat({ onComplete }) {
               <div className={`chat-bubble ${msg.sender}`}>{msg.text}</div>
             </div>
 
-            {msg.sender === 'bot' && idx === messages.length - 1 && recapText && (
-              <div className="chat-recap-bubble">
-                <div className="chat-avatar" style={{ opacity: 0.6 }}>T</div>
-                <div className="chat-bubble bot chat-bubble-recap">{recapText}</div>
-              </div>
-            )}
 
             {msg.options && idx === messages.length - 1 && !isTyping && (
               <div className="chat-options">
