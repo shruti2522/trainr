@@ -3,19 +3,19 @@ import './index.css';
 import './App.css';
 
 import { EXERCISES_URL } from './utils/helpers';
-import HeroPage from './components/HeroPage';
-import IntakeChat from './components/IntakeChat/IntakeChat';
-import CommitmentPage from './components/CommitmentPage';
-import PlanPage from './components/PlanPage';
-import LibraryPage from './components/LibraryPage';
-import ProgressPage from './components/ProgressPage';
-import GoalPage from './components/GoalPage';
-import HistoryPage from './components/HistoryPage';
+import HeroPage from './components/HeroPage/HeroPage';
+import Chat from './components/HeroPage/Chat/Chat';
+import CommitmentPage from './components/CommitmentPage/CommitmentPage';
+import PlanPage from './components/PlanPage/PlanPage';
+import LibraryPage from './components/LibraryPage/LibraryPage';
+import ProgressPage from './components/ProgressPage/ProgressPage';
+import GoalPage from './components/GoalPage/GoalPage';
+import HistoryPage from './components/HistoryPage/HistoryPage';
 
-import WorkoutSession from './components/WorkoutSession';
-import WorkoutComplete from './components/WorkoutComplete';
-import BadgeToast from './components/BadgeToast';
-import { calculateStreak, calculateTotalXP, getUnlockedBadges } from './utils/gamification';
+import WorkoutSession from './components/WorkoutSession/WorkoutSession';
+import WorkoutComplete from './components/WorkoutSession/WorkoutComplete';
+import BadgeToast from './components/Layout/BadgeToast';
+import { calculateStreak, calculateTotalXP, getUnlockedBadges } from './utils/xp';
 
 function useLocalStorage(key, initialValue) {
   const [storedValue, setStoredValue] = useState(() => {
@@ -80,7 +80,7 @@ function App() {
     const newlyUnlocked = currentUnlocked.filter(id => !unlockedBadges.includes(id));
     if (newlyUnlocked.length > 0) {
       setUnlockedBadges(currentUnlocked);
-      import('./utils/gamification').then(({ ALL_BADGES }) => {
+      import('./utils/xp').then(({ ALL_BADGES }) => {
         const fullBadges = newlyUnlocked.map(id => ALL_BADGES.find(b => b.id === id)).filter(Boolean);
         setNewBadgeQueue(prev => [...prev, ...fullBadges]);
       });
@@ -129,7 +129,10 @@ function App() {
     setHistory([]);
     setWorkoutElapsed(0);
     const daysPerWeek = parseInt(preferences.frequency) || 3;
-    const sessionLength = parseInt(preferences.duration) || 30;
+    
+    // Parse sessionDuration (e.g., "45_60" -> 45, "30_45" -> 30)
+    const durationRange = preferences.sessionDuration || '45_60';
+    const sessionLength = parseInt(durationRange.split('_')[0]) || 45;
     
     setHabitContract({
       daysPerWeek,
@@ -254,7 +257,7 @@ function App() {
         {view === 'hero' ? (
           <HeroPage onStart={handleStart} onComplete={handleWizardComplete} />
         ) : view === 'wizard' ? (
-          <IntakeChat onComplete={handleWizardComplete} />
+          <Chat onComplete={handleWizardComplete} />
         ) : view === 'commitment' && prefs && habitContract ? (
           <CommitmentPage
             prefs={prefs}

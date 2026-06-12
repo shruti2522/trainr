@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import DashboardLayout from './DashboardLayout';
+import DashboardLayout from '../Layout/DashboardLayout';
 import { Flame, CheckCircle, Repeat, Clock, CalendarOff, Dumbbell, Circle, CheckCircle2, Zap as ZapIcon, Leaf, Sword, Trophy } from 'lucide-react';
-import { LEVELS, getLevelProgress } from '../utils/gamification';
+import { LEVELS, getLevelProgress } from '../../utils/xp';
 
 const ICON_MAP = {
   'seedling': Leaf,

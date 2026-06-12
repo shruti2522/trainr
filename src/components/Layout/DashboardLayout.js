@@ -19,7 +19,7 @@ export default function DashboardLayout({
   return (
     <div className={`layout-3col animate-fade-in ${!sidebarOpen && !isMobile ? 'desktop-collapsed' : ''}`}>
 
-      {/* Mobile Header */}
+      {/* mobile Header */}
       <div className="mobile-header">
         <button
           className="mobile-menu-btn"
@@ -38,12 +38,11 @@ export default function DashboardLayout({
         </button>
       </div>
 
-      {/* Backdrop for mobile */}
+    {/*mobile*/}
       {sidebarOpen && isMobile && (
         <div className="sidebar-backdrop" onClick={onCloseSidebar} />
       )}
 
-      {/* Left Sidebar */}
       <aside className={`layout-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <button
@@ -125,12 +124,10 @@ export default function DashboardLayout({
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className="layout-main">
         {children}
       </main>
 
-      {/* Right Summary Panel (optional) */}
       {summaryPanel && (
         <aside className="layout-summary">
           {summaryPanel}

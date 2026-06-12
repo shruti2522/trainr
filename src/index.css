@@ -2800,7 +2800,7 @@ h1, h2, h3, h4 {
   .plan-day-content { padding: 16px 14px 0; }
 }
 
-/* Gamification Animations */
+/* xp Animations */
 @keyframes streakPulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.04); }

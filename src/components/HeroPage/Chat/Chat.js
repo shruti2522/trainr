@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { extractPreferencesFromText, generateFollowUp } from '../../services/geminiService';
-import './IntakeChat.css';
+import { extractPreferencesFromText, generateFollowUp } from '../../../services/geminiService';
+import './Chat.css';
 
 const INITIAL_QUESTION = "Hey! What's your main fitness goal right now?";
 const INITIAL_SUGGESTIONS = [
@@ -10,14 +10,8 @@ const INITIAL_SUGGESTIONS = [
   "General health & fitness"
 ];
 
-const TOTAL_STEPS = 2;
+const TOTAL_STEPS = 3;
 
-/* ─── Validation helpers ─── */
-
-/**
- * Step 0: a goal answer just needs to be non-empty.
- * Returns null (valid) or a prompt string for what's missing.
- */
 function validateGoal(text) {
   if (text.trim().length < 2) {
     return "Just a word or two is fine — what are you hoping to achieve? 💪";
@@ -25,10 +19,6 @@ function validateGoal(text) {
   return null;
 }
 
-/**
- * Step 1: we need BOTH a frequency signal AND an equipment signal.
- * Returns null (valid) or an object { missing, prompt } describing what's absent.
- */
 const FREQUENCY_PATTERNS = [
   /\b(\d+)\s*(?:x|times?|days?|sessions?)\b/i,
   /\b(once|twice|three|four|five|six|seven|daily|every\s+day)\b/i,
@@ -37,10 +27,10 @@ const FREQUENCY_PATTERNS = [
 ];
 
 const EQUIPMENT_PATTERNS = [
-  /\b(gym|dumbbell|barbell|kettlebell|machine|cable|rack|bench)\b/i,
+  /\b(gym|dumbbell|dumbbells|barbell|kettlebell|machine|cable|rack|bench|weights?)\b/i,
   /\b(bodyweight|body\s*weight|calisthenics|no\s*equip|home)\b/i,
-  /\b(band|resistance|pull.?up|bar|trx)\b/i,
-  /\b(full|minimal|basic|limited|no)\s*(gym|equip|equipment|gear)\b/i,
+  /\b(band|bands|resistance|pull.?up|bar|trx)\b/i,
+  /\b(full|minimal|basic|limited|no)\s*(gym|equip|equipment|gear|weights?)\b/i,
 ];
 
 function hasFrequency(text) {
@@ -79,9 +69,22 @@ function validateSchedule(text) {
   return null; // all good
 }
 
-/* ─── Component ─── */
+const SESSION_DURATION_PATTERNS = [
+  /\b(15|20|25|30|45|60|90)\s*(–|-|to)?\s*(30|45|60)?\s*(min|minute|minutes)?\b/i,
+  /\b(1\+?\s*hour|hour|hours?)\b/i,
+  /\b(quick|short|15_30|30_45|45_60|long|extended)\b/i,
+];
 
-export default function IntakeChat({ onComplete }) {
+function validateSessionDuration(text) {
+  const hasDuration = SESSION_DURATION_PATTERNS.some(re => re.test(text));
+  if (!hasDuration) {
+    return "How long would you like each session to be? (e.g., 30 minutes, 45 minutes, or 1 hour)";
+  }
+  return null;
+}
+
+
+export default function Chat({ onComplete }) {
   const [step, setStep]                         = useState(0);
   const [messages, setMessages]                 = useState([]);
   const [inputText, setInputText]               = useState('');
@@ -90,7 +93,6 @@ export default function IntakeChat({ onComplete }) {
   const [knownFacts, setKnownFacts]             = useState([]);
   const [conversationHistory, setConversationHistory] = useState('');
 
-  // Accumulates step-1 partial answers until both signals are present
   const [scheduleAccum, setScheduleAccum]       = useState('');
 
   const chatEndRef = useRef(null);
@@ -100,7 +102,6 @@ export default function IntakeChat({ onComplete }) {
 
   useEffect(() => { scrollToBottom(); }, [messages, isTyping]);
 
-  // Greeting on mount
   useEffect(() => {
     setIsTyping(true);
     setTimeout(() => {
@@ -111,10 +112,8 @@ export default function IntakeChat({ onComplete }) {
         options: INITIAL_SUGGESTIONS,
       }]);
     }, 800);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* ─── Helpers ─── */
 
   const appendBotMessage = (text, options = null) => {
     setMessages(prev => [...prev, { sender: 'bot', text, options }]);
@@ -128,8 +127,6 @@ export default function IntakeChat({ onComplete }) {
     });
   };
 
-  /* ─── Handlers ─── */
-
   const handleSuggestionClick = (suggestion) => {
     if (isParsing || isTyping) return;
     submitResponse(suggestion);
@@ -142,7 +139,6 @@ export default function IntakeChat({ onComplete }) {
     setInputText('');
   };
 
-  /* ─── Core submit logic ─── */
 
   const submitResponse = async (userText) => {
     appendUserMessage(userText);
@@ -152,11 +148,9 @@ export default function IntakeChat({ onComplete }) {
       : userText;
     setConversationHistory(newHistory);
 
-    /* ── Step 0: validate goal ── */
     if (step === 0) {
       const goalError = validateGoal(userText);
       if (goalError) {
-        // Stay on step 0, nudge the user
         setIsTyping(true);
         setTimeout(() => {
           setIsTyping(false);
@@ -190,36 +184,95 @@ export default function IntakeChat({ onComplete }) {
       return;
     }
 
-    /* ── Step 1: validate schedule (days + equipment) ── */
     if (step === 1) {
-      // Merge with anything the user already told us this step
       const accumulated = scheduleAccum
         ? `${scheduleAccum} ${userText}`
         : userText;
 
-      const scheduleError = validateSchedule(accumulated);
+      setScheduleAccum(accumulated);
+      setIsTyping(true);
+      setIsParsing(true);
 
-      if (scheduleError) {
-        // Persist what we have so far, ask only for what's missing
-        setScheduleAccum(accumulated);
+      try {
+        const testHistory = `User goal: ${knownFacts[0]}\nUser schedule/equipment info: ${accumulated}`;
+        const extracted = await extractPreferencesFromText(testHistory);
+        
+        const hasFreq = extracted?.frequency && extracted.frequency !== '0';
+        const hasEquip = extracted?.equipment && extracted.equipment.length > 0;
+
+        setIsTyping(false);
+        setIsParsing(false);
+
+        if (hasFreq && hasEquip) {
+          setStep(2);
+          setKnownFacts(prev => [...prev, accumulated]);
+          setTimeout(() => {
+            appendBotMessage(
+              "How long would you like each session to be?",
+              ["15–30 minutes", "30–45 minutes", "45–60 minutes", "1+ hours"]
+            );
+          }, 300);
+          return;
+        }
+
+        const scheduleError = validateSchedule(accumulated);
+        if (scheduleError) {
+          setTimeout(() => {
+            appendBotMessage(scheduleError.prompt, scheduleError.chips);
+          }, 300);
+          return;
+        }
+
+        setStep(2);
+        setKnownFacts(prev => [...prev, accumulated]);
+        setTimeout(() => {
+          appendBotMessage(
+            "How long would you like each session to be?",
+            ["15–30 minutes", "30–45 minutes", "45–60 minutes", "1+ hours"]
+          );
+        }, 300);
+
+      } catch (err) {
+        console.error(err);
+        setIsTyping(false);
+        setIsParsing(false);
+
+        // Fall back to regex validation on Gemini error
+        const scheduleError = validateSchedule(accumulated);
+        if (scheduleError) {
+          appendBotMessage(scheduleError.prompt, scheduleError.chips);
+          return;
+        }
+
+        setStep(2);
+        setKnownFacts(prev => [...prev, accumulated]);
+        setTimeout(() => {
+          appendBotMessage(
+            "How long would you like each session to be?",
+            ["15–30 minutes", "30–45 minutes", "45–60 minutes", "1+ hours"]
+          );
+        }, 300);
+      }
+      return;
+    }
+
+    if (step === 2) {
+      const durationError = validateSessionDuration(userText);
+      if (durationError) {
         setIsTyping(true);
         setTimeout(() => {
           setIsTyping(false);
-          appendBotMessage(scheduleError.prompt, scheduleError.chips);
+          appendBotMessage(durationError, ["15–30 minutes", "30–45 minutes", "45–60 minutes", "1+ hours"]);
         }, 600);
         return;
       }
 
-      // Both signals present — proceed to extraction
-      setStep(2);
-      setKnownFacts(prev => [...prev, accumulated]);
+      setStep(3);
+      setKnownFacts(prev => [...prev, userText]);
       setIsParsing(true);
       setIsTyping(true);
 
-      // Use the full accumulated schedule answer in history
-      const fullHistory = conversationHistory.includes(scheduleAccum)
-        ? newHistory
-        : `${newHistory} ${scheduleAccum}`;
+      const fullHistory = `${conversationHistory}`;
 
       try {
         const extracted = await extractPreferencesFromText(fullHistory);
@@ -234,7 +287,7 @@ export default function IntakeChat({ onComplete }) {
             targetAreas:     extracted?.targetAreas?.length ? extracted.targetAreas : ['full_body'],
             injuries:        extracted?.injuries        || [],
             duration:        extracted?.duration        || '6m_2y',
-            sessionDuration: '45_60',
+            sessionDuration: extracted?.sessionDuration || '45_60',
             weeklyTime:      '2_4h',
           });
         }, 1000);
@@ -244,7 +297,7 @@ export default function IntakeChat({ onComplete }) {
         setIsTyping(false);
         setIsParsing(false);
         appendBotMessage("Oops, had trouble with that. Could you try rephrasing?");
-        setStep(1); // let them retry
+        setStep(2); // let them retry
       }
       return;
     }
@@ -252,10 +305,11 @@ export default function IntakeChat({ onComplete }) {
 
   /* ─── UI ─── */
 
-  const progressPct   = step === 0 ? 10 : step === 1 ? 50 : 90;
+  const progressPct   = step === 0 ? 10 : step === 1 ? 50 : step === 2 ? 75 : 95;
   const progressLabel =
-    step === 0 ? `Step 1 of ${TOTAL_STEPS + 1}` :
-    step === 1 ? `Step 2 of ${TOTAL_STEPS + 1}` :
+    step === 0 ? `Step 1 of ${TOTAL_STEPS}` :
+    step === 1 ? `Step 2 of ${TOTAL_STEPS}` :
+    step === 2 ? `Step 3 of ${TOTAL_STEPS}` :
     'Almost done…';
 
   return (
@@ -330,7 +384,6 @@ export default function IntakeChat({ onComplete }) {
         </button>
       </form>
 
-      {/* Known so far */}
       {knownFacts.length > 0 && (
         <div className="chat-known-bar">
           <span className="chat-known-label">Known</span>

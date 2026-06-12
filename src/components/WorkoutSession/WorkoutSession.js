@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getExerciseImageUrl, capitalize } from '../utils/helpers';
+import { getExerciseImageUrl, capitalize } from '../../utils/helpers';
 
 function SetTimer({ durationSeconds, onDone }) {
   const isCountdown = !!durationSeconds;

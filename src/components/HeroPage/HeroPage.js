@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import IntakeChat from './IntakeChat/IntakeChat';
-import '../App.css';
+import Chat from './Chat/Chat';
+import '../../App.css';
 
 export default function HeroPage({ onComplete }) {
   const [bgImage, setBgImage] = useState('');
@@ -38,14 +38,10 @@ export default function HeroPage({ onComplete }) {
 
       
       const fallbackImages = [
-        'https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/4327019/pexels-photo-4327019.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/416978/pexels-photo-416978.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/3196887/pexels-photo-3196887.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/3862606/pexels-photo-3862606.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/4720256/pexels-photo-4720256.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/2284165/pexels-photo-2284165.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/375889/pexels-photo-375889.jpeg?auto=compress&cs=tinysrgb&w=800',
+        'https://images.pexels.com/photos/4327019/pexels-photo-4327019.jpeg?auto=compress&cs=tinysrgb&w=1000',
+        'https://images.pexels.com/photos/4720256/pexels-photo-4720256.jpeg?auto=compress&cs=tinysrgb&w=1000',
+		'https://images.pexels.com/photos/703010/pexels-photo-703010.jpeg?auto=compress&cs=tinysrgb&w=1000',
+		'https://images.pexels.com/photos/3775526/pexels-photo-3775526.jpeg?auto=compress&cs=tinysrgb&w=1000',
       ];
       
       const randomImage = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
@@ -97,7 +93,7 @@ export default function HeroPage({ onComplete }) {
         </div>
       </div>
       <div className="hero2-chat-container">
-        <IntakeChat onComplete={onComplete} />
+        <Chat onComplete={onComplete} />
       </div>
     </div>
   );

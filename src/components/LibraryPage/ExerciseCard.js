@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { getExerciseImageUrl, capitalize, formatCategoryLabel, CATEGORY_COLORS, LEVEL_COLORS } from '../utils/helpers';
+import { getExerciseImageUrl, capitalize, formatCategoryLabel, CATEGORY_COLORS, LEVEL_COLORS } from '../../utils/helpers';
 
 function PrescriptionRow({ sets, reps, durationSeconds, restSeconds }) {
   if (!sets) return null;

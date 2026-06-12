@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import DashboardLayout from './DashboardLayout';
-import { getLevelProgress, ALL_BADGES, RARITY_STYLES } from '../utils/gamification';
+import DashboardLayout from '../Layout/DashboardLayout';
+import { getLevelProgress, ALL_BADGES, RARITY_STYLES } from '../../utils/xp';
 import { Flame, Activity, Calendar, Dumbbell, Target, Shield, Thermometer, Star, Sunrise, Zap, Crown, RefreshCw, CheckCircle, Flame as FlameIcon, User, Crosshair, Wrench, ShieldAlert, RefreshCcw } from 'lucide-react';
 
 const ICON_MAP = {

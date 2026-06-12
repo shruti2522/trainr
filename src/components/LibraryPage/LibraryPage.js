@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import DashboardLayout from './DashboardLayout';
-import { formatCategoryLabel, CATEGORY_COLORS, getExerciseImageUrl } from '../utils/helpers';
-import { TARGET_AREA_OPTIONS } from '../utils/constants';
-import { INJURY_MUSCLES } from '../filterExercises';
+import DashboardLayout from '../Layout/DashboardLayout';
+import { formatCategoryLabel, CATEGORY_COLORS, getExerciseImageUrl } from '../../utils/helpers';
+import { TARGET_AREA_OPTIONS } from '../../utils/constants';
+import { INJURY_MUSCLES } from '../../filterExercises';
 
 const TARGET_AREA_MUSCLES = {
   upper_body: ['chest', 'lats', 'middle back', 'lower back', 'shoulders', 'biceps', 'triceps', 'forearms', 'neck', 'traps'],

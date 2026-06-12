@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { RARITY_STYLES } from '../utils/gamification';
+import { RARITY_STYLES } from '../../utils/xp';
 import { Flame, Activity, Calendar, Dumbbell, Target, Shield, Thermometer, Star, Sunrise, Zap, Crown, RefreshCw } from 'lucide-react';
 
 const ICON_MAP = {

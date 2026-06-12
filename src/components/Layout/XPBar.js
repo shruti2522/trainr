@@ -1,5 +1,5 @@
 import React from 'react';
-import { getLevelProgress } from '../utils/gamification';
+import { getLevelProgress } from '../../utils/xp';
 import { Zap, Flame, Sword, Trophy, Leaf } from 'lucide-react';
 
 const ICON_MAP = {

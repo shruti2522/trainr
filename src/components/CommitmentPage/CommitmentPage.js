@@ -72,7 +72,7 @@ export default function CommitmentPage({
               </div>
               <div className="commitment-stat-cell">
                 <div className="commitment-stat-num" style={{ fontSize: '1.6rem', paddingTop: '6px', lineHeight: '1.1' }}>
-                  Sun<br />reset
+                  Weekly<br />reset
                 </div>
                 <div className="commitment-stat-desc">week resets<br />on Sunday</div>
               </div>
@@ -81,14 +81,14 @@ export default function CommitmentPage({
           <div className="commitment-includes">
             <div className="commitment-field-label" style={{ marginBottom: '4px' }}>What's included in Week {weekNumber}</div>
             <div className="commitment-includes-list">
-              <div className="commitment-includes-item"><strong>{daysPerWeek} personalized sessions</strong> — built around your goal and current fitness level</div>
+              <div className="commitment-includes-item"><strong>{daysPerWeek} personalized sessions</strong>, built around your goal and current fitness level</div>
               <div className="commitment-includes-item"><strong>About {daysPerWeek * sessionLength} minutes total</strong> across the week, spread however you like</div>
               <div className="commitment-includes-item"><strong>Daily check-ins</strong> to keep momentum between sessions</div>
-              <div className="commitment-includes-item"><strong>Your habit resets Sunday</strong> so each week is a clean start</div>
+              <div className="commitment-includes-item"><strong>Your habit resets every week</strong> so each week is a clean start</div>
             </div>
           </div>
           <p className="commitment-note">
-            You can adjust your weekly frequency anytime from your Goal page. There's no subscription required and no penalty for changing your mind.
+            You can adjust your weekly frequency anytime from your Goal page.
           </p>
           <div className="commitment-actions">
             <button className="commitment-btn-primary" onClick={onStartWeek}>

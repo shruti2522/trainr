@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { capitalize, formatCategoryLabel } from '../utils/helpers';
+import { capitalize, formatCategoryLabel } from '../../utils/helpers';
 
 export default function PickExerciseModal({ allExercises, currentId, onPick, onClose }) {
   const [query, setQuery] = useState('');

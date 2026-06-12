@@ -1,5 +1,5 @@
 import React from 'react';
-import DashboardLayout from './DashboardLayout';
+import DashboardLayout from '../Layout/DashboardLayout';
 import { History, Clock, Repeat, TrendingUp, Play } from 'lucide-react';
 
 function formatDuration(seconds) {

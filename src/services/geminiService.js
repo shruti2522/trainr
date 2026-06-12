@@ -287,13 +287,14 @@ export async function extractPreferencesFromText(userText) {
   const prompt = `You are a fitness assistant. Deduce the user's fitness profile from their message.
 Message: "${userText}"
 
-Extract the following preferences based on the message. If something is not explicitly mentioned, use reasonable defaults (e.g., frequency: "3", goal: "general_fitness", equipment: ["No equipment (bodyweight)"], targetAreas: ["full_body"]).
+Extract the following preferences based on the message. If something is not explicitly mentioned, use reasonable defaults.
 - frequency: number of days per week they work out (e.g. "2", "3", "4", "5", "6")
 - goal: exactly one of ["build_muscle", "lose_weight", "improve_endurance", "increase_flexibility", "general_fitness"]
 - equipment: array of strings. Use standard options like "No equipment (bodyweight)", "Dumbbells", "Barbell", "Kettlebells", "Resistance bands", "Cable machine", "Gym machines".
 - targetAreas: array of strings. Options: "upper_body", "lower_body", "core", "full_body".
 - duration: their workout experience level. Exactly one of ["under_6m", "6m_2y", "2y_plus"]. Default to "6m_2y" if unsure.
 - injuries: array of strings (e.g., ["knees", "lower back"]). Empty if none mentioned.
+- sessionDuration: their desired session length. Extract from context. Use one of ["20_30", "30_45", "45_60", "60_90", "90_plus"]. Try to match: "15-30 min" -> "20_30", "30-45 min" -> "30_45", "45-60 min" -> "45_60", "1+ hour" -> "60_90". Default to "45_60" if unclear.
 `;
 
   const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
@@ -312,9 +313,10 @@ Extract the following preferences based on the message. If something is not expl
             equipment: { type: "ARRAY", items: { type: "STRING" } },
             targetAreas: { type: "ARRAY", items: { type: "STRING" } },
             duration: { type: "STRING" },
-            injuries: { type: "ARRAY", items: { type: "STRING" } }
+            injuries: { type: "ARRAY", items: { type: "STRING" } },
+            sessionDuration: { type: "STRING" }
           },
-          required: ["frequency", "goal", "equipment", "targetAreas", "duration", "injuries"]
+          required: ["frequency", "goal", "equipment", "targetAreas", "duration", "injuries", "sessionDuration"]
         }
       }
     })

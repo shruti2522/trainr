@@ -1,16 +1,16 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import './PlanPage.css';
-import { filterExercises, inferLevel, getDayCount } from '../filterExercises';
-import { capitalize } from '../utils/helpers';
-import { generatePlan } from '../services/geminiService';
-import { GOAL_OPTIONS } from '../utils/constants';
-import LoadingScreen from './LoadingScreen';
+import { filterExercises, inferLevel, getDayCount } from '../../filterExercises';
+import { capitalize } from '../../utils/helpers';
+import { generatePlan } from '../../services/geminiService';
+import { GOAL_OPTIONS } from '../../utils/constants';
+import LoadingScreen from '../WorkoutSession/LoadingScreen';
 import ExerciseRow from './ExerciseRow';
 import PickExerciseModal from './PickExerciseModal';
-import DashboardLayout from "./DashboardLayout";
+import DashboardLayout from "../Layout/DashboardLayout";
 import StreakWidget from './StreakWidget';
 import DailyQuestCard from './DailyQuestCard';
-import { getDailyQuests, isQuestDoneToday } from '../utils/gamification';
+import { getDailyQuests, isQuestDoneToday } from '../../utils/xp';
 import { Trophy, Plus, CheckCircle2 } from 'lucide-react';
 
 const DAY_LABELS = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];

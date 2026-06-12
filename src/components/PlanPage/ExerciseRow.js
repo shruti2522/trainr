@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { formatCategoryLabel, getExerciseImageUrl } from '../utils/helpers';
+import { formatCategoryLabel, getExerciseImageUrl } from '../../utils/helpers';
 import PickExerciseModal from './PickExerciseModal';
 import { GripVertical, Check } from 'lucide-react';
 
