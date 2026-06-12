@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { formatCategoryLabel, CATEGORY_COLORS, getExerciseImageUrl } from '../utils/helpers';
+import { formatCategoryLabel, getExerciseImageUrl } from '../utils/helpers';
 import PickExerciseModal from './PickExerciseModal';
 import { GripVertical, Check } from 'lucide-react';
 
@@ -9,7 +9,6 @@ export default function ExerciseRow({ exercise, index, isCompleted, filteredPool
 
   if (!exercise) return null;
 
-  const categoryClass = CATEGORY_COLORS[exercise.category] || 'badge-gray';
   const effort = exercise.durationSeconds
     ? `${exercise.sets} set${exercise.sets > 1 ? 's' : ''} × ${exercise.durationSeconds}s`
     : exercise.sets ? `${exercise.sets} set${exercise.sets > 1 ? 's' : ''} × ${exercise.reps} reps` : null;

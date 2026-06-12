@@ -350,8 +350,8 @@ export default function GoalPage({
                   <h4 style={{ margin: '0 0 4px', fontSize: '0.8rem', fontWeight: '700', color: isUnlocked ? 'var(--text-primary)' : 'var(--text-muted)' }}>
                     {badge.name}
                   </h4>
-                  <span style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: isUnlocked ? style.color : 'var(--text-muted)', fontWeight: '800' }}>
-                    {badge.unlockPoints || style.label}
+                  <span style={{ fontSize: '0.65rem', lineHeight: '1.3', color: isUnlocked ? style.color : 'var(--text-muted)', fontWeight: '500' }}>
+                    {badge.desc}
                   </span>
                 </div>
               );

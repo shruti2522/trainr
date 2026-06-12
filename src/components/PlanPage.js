@@ -15,12 +15,9 @@ import { Trophy, Plus, CheckCircle2 } from 'lucide-react';
 
 const DAY_LABELS = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];
 
-// ── Color tokens ────────────────────────────────────────────────────────────
-const G = '#4ade80';               // primary green (new design)
+const G = '#4ade80';               
 const G_DIM = 'rgba(74,222,128,0.1)';  // badge fill
-const G_BORDER = 'rgba(74,222,128,0.2)'; // badge border
-const BLACK = '#0f0f0d';           // main bg (new design)
-const BLACK_CARD = '#1c1c1a';      // card bg (new design)
+const G_BORDER = 'rgba(74,222,128,0.2)'; 
 const WHITE_60 = 'rgba(255,255,255,0.6)';
 const WHITE_40 = 'rgba(255,255,255,0.4)';
 const WHITE_10 = 'rgba(255,255,255,0.08)';

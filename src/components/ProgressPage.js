@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import DashboardLayout from './DashboardLayout';
-import { Flame, CheckCircle, Repeat, Clock, CalendarOff, Dumbbell, Circle, CheckCircle2, Zap as ZapIcon, Leaf, Sword, Crown, Trophy } from 'lucide-react';
-import { LEVELS, calculateTotalXP, getLevelProgress } from '../utils/gamification';
+import { Flame, CheckCircle, Repeat, Clock, CalendarOff, Dumbbell, Circle, CheckCircle2, Zap as ZapIcon, Leaf, Sword, Trophy } from 'lucide-react';
+import { LEVELS, getLevelProgress } from '../utils/gamification';
 
 const ICON_MAP = {
   'seedling': Leaf,
@@ -16,8 +16,6 @@ function LevelProgression({ xp = 0 }) {
   const currentLevel = progressData?.level || LEVELS[0];
 
   if (!currentLevel) return null;
-
-  const nextLevel = LEVELS[currentLevel.index + 1];
 
   return (
     <div style={{ marginBottom: '24px' }}>
