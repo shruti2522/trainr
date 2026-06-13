@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Chat.css';
-import { classifyChatInput, extractPreferencesFromText } from '../../../services/geminiService';
+import { extractPreferencesFromText } from '../../../services/geminiService';
 
 const TOTAL_STEPS = 6;
 
