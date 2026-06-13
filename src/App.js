@@ -139,6 +139,8 @@ function App() {
     setSavedPlan(null);
     setHistory([]);
     setWorkoutElapsed(0);
+    setCompletedQuests([]);
+    setUnlockedBadges([]);
     const daysPerWeek = parseInt(preferences.frequency) || 3;
     
     
