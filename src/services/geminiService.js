@@ -51,7 +51,9 @@ function buildPrompt(prefs, filteredExercises) {
 
   const dayCount = parseInt(frequency, 10) || 3;
 
-  const exerciseList = scored.slice(0, Math.min(50, Math.max(30, dayCount * 8))).map(({ ex }) => ({
+  const poolSize = filteredExercises.length;
+  const maxToSend = poolSize < 40 ? poolSize : Math.min(50, Math.max(30, dayCount * 8));
+  const exerciseList = scored.slice(0, maxToSend).map(({ ex }) => ({
     id: ex.id,
     name: ex.name,
     primaryMuscles: ex.primaryMuscles,
@@ -110,6 +112,7 @@ INSTRUCTIONS:
    - Include appropriate restSeconds between sets (60–90s for strength, 30s for stretching).
 6. Write a concise, motivating coaching note for each exercise (1 sentence, focus on form or key benefit).
 7. Only use exercises from the provided list (match by id). Do NOT invent new exercises.
+8. If the exercise pool is small (under ${dayCount * 9} total exercises provided), you MAY repeat the same exercise on different days. Never repeat an exercise within the same day.
 
 RESPOND WITH VALID JSON ONLY. No markdown, no explanation.`;
 }
