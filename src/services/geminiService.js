@@ -99,7 +99,7 @@ AVAILABLE EXERCISES (choose from these only, reference by id):
 ${JSON.stringify(exerciseList, null, 2)}
 
 INSTRUCTIONS:
-1. Create exactly ${dayCount} training days.
+1. Create exactly ${dayCount} training days. Each day MUST have a compelling, catchy "label" (e.g., "Full Body Burn", "Core Power") and a highly personalized 2-sentence "coachNote" addressing the user. The coachNote MUST clearly describe the specific benefits of completing this exact session today, and paint a clear picture of how they will feel or what they will have achieved immediately after finishing it (e.g. "By finishing this, you will have built a stronger foundation, and your legs will feel powerfully worked."). Use extremely plain, conversational, beginner-friendly language for BOTH the label and the coachNote. Avoid complex fitness jargon like "hypertrophy", "protein synthesis", "metabolic", etc. Speak like a friendly, encouraging coach.
 2. VOLUME REQUIREMENT: You MUST assign exactly ${volumeTarget} total exercises per day. Do not assign fewer, or the session will be too short for the user's selected time commitment of ${sessionLabel}.
 3. 3-PHASE STRUCTURE: Every single day MUST be structured in this exact chronological order. Each exercise MUST have its "phase" field set to EXACTLY one of these three lowercase strings (no other values are valid):
    - "warmup"   — Phase 1: 1-2 dynamic stretching, mobility, or light cardio exercises.
@@ -110,7 +110,7 @@ INSTRUCTIONS:
    - For strength/hypertrophy: use reps (e.g., 8–12). Apply the set count guidance above.
    - For cardio/stretching/planks (Warm-ups & Cool-downs): use durationSeconds (e.g., 45s or 60s), 1–2 sets.
    - Include appropriate restSeconds between sets (60–90s for strength, 30s for stretching).
-6. Write a concise, motivating coaching note for each exercise (1 sentence, focus on form or key benefit).
+6. Write a highly specific "note" for each exercise explaining why *this* exercise is in *their* plan for their specific goal, rather than just generic form tips. Use simple, jargon-free language.
 7. Only use exercises from the provided list (match by id). Do NOT invent new exercises.
 8. If the exercise pool is small (under ${dayCount * 9} total exercises provided), you MAY repeat the same exercise on different days. Never repeat an exercise within the same day.
 
@@ -190,10 +190,10 @@ function mergePlanWithExercises(generatedPlan, filteredExercises, allExercises) 
         if (!fullEx) return null;
         return {
           ...fullEx,
-          sets:            genEx.sets            ?? fullEx.sets,
-          reps:            genEx.reps            ?? fullEx.reps,
-          durationSeconds: genEx.durationSeconds ?? fullEx.durationSeconds,
-          restSeconds:     genEx.restSeconds     ?? fullEx.restSeconds,
+          sets:            genEx.sets !== undefined ? genEx.sets : fullEx.sets,
+          reps:            genEx.reps !== undefined ? genEx.reps : fullEx.reps,
+          durationSeconds: genEx.durationSeconds !== undefined ? genEx.durationSeconds : fullEx.durationSeconds,
+          restSeconds:     genEx.restSeconds !== undefined ? genEx.restSeconds : fullEx.restSeconds,
           note:            genEx.note,
           phase:           genEx.phase,
         };
@@ -205,6 +205,7 @@ function mergePlanWithExercises(generatedPlan, filteredExercises, allExercises) 
       dayNumber: day.dayNumber,
       label:     day.label,
       focus:     day.focus,
+      coachNote: day.coachNote,
       completed: false,
       exercises,
     };
@@ -271,6 +272,7 @@ export async function generatePlan(prefs, filteredExercises, signal, allExercise
                       dayNumber: { type: "INTEGER" },
                       label: { type: "STRING" },
                       focus: { type: "STRING" },
+                      coachNote: { type: "STRING" },
                       exercises: {
                         type: "ARRAY",
                         items: {

@@ -3,11 +3,10 @@ import { createPortal } from 'react-dom';
 import { getExerciseImageUrl, capitalize, formatCategoryLabel, CATEGORY_COLORS, LEVEL_COLORS } from '../../utils/helpers';
 
 function PrescriptionRow({ sets, reps, durationSeconds, restSeconds }) {
-  if (!sets) return null;
-
+  const setsNum = sets || 1;
   const effort = durationSeconds
-    ? `${sets} × ${durationSeconds}s`
-    : `${sets} × ${reps} reps`;
+    ? `${setsNum} × ${durationSeconds}s`
+    : `${setsNum} × ${reps || 0} reps`;
 
   const rest = restSeconds ? `Rest ${restSeconds}s` : null;
 

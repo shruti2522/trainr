@@ -187,7 +187,7 @@ export default function WorkoutSession({ day, onBack, onComplete, onUpdateProgre
 
 						<div className="session-ex-badges">
 							<span className="prescription-effort">
-								{ex.durationSeconds ? `${ex.durationSeconds}s hold` : `${ex.reps} reps`}
+								{ex.durationSeconds ? `${ex.durationSeconds}s hold` : `${ex.reps || 0} reps`}
 							</span>
 							{ex.restSeconds > 0 && (
 								<span className="prescription-rest">Rest {ex.restSeconds}s after</span>

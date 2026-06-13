@@ -611,7 +611,6 @@
 }
 
 .plan-page-meta span:nth-child(odd) {
-  font-weight: 700;
   color: var(--plan-green);
 }
 

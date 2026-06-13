@@ -9,9 +9,10 @@ export default function ExerciseRow({ exercise, index, isCompleted, filteredPool
 
   if (!exercise) return null;
 
+  const setsNum = exercise.sets || 1;
   const effort = exercise.durationSeconds
-    ? `${exercise.sets} set${exercise.sets > 1 ? 's' : ''} × ${exercise.durationSeconds}s`
-    : exercise.sets ? `${exercise.sets} set${exercise.sets > 1 ? 's' : ''} × ${exercise.reps} reps` : null;
+    ? `${setsNum} set${setsNum > 1 ? 's' : ''} × ${exercise.durationSeconds}s`
+    : `${setsNum} set${setsNum > 1 ? 's' : ''} × ${exercise.reps || 0} reps`;
 
   const imageUrl = exercise.images && exercise.images[0]
     ? getExerciseImageUrl(exercise.images[0])

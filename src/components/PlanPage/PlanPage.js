@@ -520,9 +520,14 @@ export default function PlanPage({
             
             <div className="plan-day-summary-left">
               <div className="plan-day-summary-info">
-                <h3>
-                  {currentDay.label}
-                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                  <h3 style={{ margin: 0 }}>{currentDay.label}</h3>
+                </div>
+                {currentDay.coachNote && (
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '6px', lineHeight: '1.4', borderLeft: '2px solid var(--plan-green)', paddingLeft: '8px' }}>
+                    {currentDay.coachNote}
+                  </p>
+                )}
               </div>
             </div>
 
