@@ -183,6 +183,11 @@ export default function WorkoutSession({ day, onBack, onComplete, onUpdateProgre
 				
 				<div className="session-ex-center">
 					<div className="session-ex-info">
+						{ex.phase && (
+							<div style={{ color: 'var(--plan-green)', fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '4px', letterSpacing: '0.05em' }}>
+								{ex.phase === 'warmup' ? 'Warm-up' : ex.phase === 'cooldown' ? 'Cool-down' : 'Main Workout'}
+							</div>
+						)}
 						<h2 className="session-ex-name">{ex.name}</h2>
 
 						<div className="session-ex-badges">

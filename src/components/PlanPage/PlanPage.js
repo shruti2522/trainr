@@ -602,27 +602,39 @@ export default function PlanPage({
               </div>
             ) : (
               <div className="ex-list animate-fade-up">
-                {sessionExercises.filter(Boolean).map((ex, exIdx) => {
-                  if (!ex) return null;
-                  const kcal = estimateCalories(ex);
-                  return (
-                    <ExerciseRow
-                      key={`${ex.id}-${exIdx}`}
-                      exercise={ex}
-                      index={exIdx}
-                      filteredPool={filtered}
-                      onShuffle={() => handleShuffle(activeDay, exIdx)}
-                      onDelete={() => handleDelete(activeDay, exIdx)}
-                      onPick={(newEx) => handlePick(activeDay, exIdx, newEx)}
-                      isReordering={isReordering}
-                      onDragStart={isReordering ? handleDragStart : undefined}
-                      onDragEnter={isReordering ? handleDragEnter : undefined}
-                      onDragEnd={isReordering ? handleDragEnd : undefined}
-                      caloriesBurned={kcal}
-                      onStartFromHere={() => onStartSession({ ...currentDay, exercises: sessionExercises, startExerciseIdx: exIdx, mode: sessionMode, progress: sessionProgress })}
-                    />
-                  );
-                })}
+                {(() => {
+                  let currentPhase = null;
+                  return sessionExercises.filter(Boolean).map((ex, exIdx) => {
+                    const kcal = estimateCalories(ex);
+                    const isNewPhase = ex.phase && ex.phase !== currentPhase;
+                    if (isNewPhase) currentPhase = ex.phase;
+                    const phaseLabel = ex.phase === 'warmup' ? 'Warm-up' : ex.phase === 'cooldown' ? 'Cool-down' : 'Main Workout';
+
+                    return (
+                      <React.Fragment key={`${ex.id}-${exIdx}`}>
+                        {isNewPhase && (
+                          <div style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--plan-green)', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: exIdx === 0 ? '0' : '12px', marginBottom: '4px', paddingLeft: '4px' }}>
+                            {phaseLabel}
+                          </div>
+                        )}
+                        <ExerciseRow
+                          exercise={ex}
+                          index={exIdx}
+                          filteredPool={filtered}
+                          onShuffle={() => handleShuffle(activeDay, exIdx)}
+                          onDelete={() => handleDelete(activeDay, exIdx)}
+                          onPick={(newEx) => handlePick(activeDay, exIdx, newEx)}
+                          isReordering={isReordering}
+                          onDragStart={isReordering ? handleDragStart : undefined}
+                          onDragEnter={isReordering ? handleDragEnter : undefined}
+                          onDragEnd={isReordering ? handleDragEnd : undefined}
+                          caloriesBurned={kcal}
+                          onStartFromHere={() => onStartSession({ ...currentDay, exercises: sessionExercises, startExerciseIdx: exIdx, mode: sessionMode, progress: sessionProgress })}
+                        />
+                      </React.Fragment>
+                    );
+                  });
+                })()}
               </div>
             )}
 
