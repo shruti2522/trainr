@@ -460,6 +460,7 @@ export async function classifyChatInput(userText, stepConfig) {
     throw new Error('API key is missing or invalid.');
   }
 
+  // eslint-disable-next-line no-unused-vars
   const allowedValues = stepConfig.chips.map(c => JSON.stringify(c.value));
   const optionsContext = stepConfig.chips.map(c => `- "${c.label}" (maps to value: ${JSON.stringify(c.value)})`).join('\n');
 

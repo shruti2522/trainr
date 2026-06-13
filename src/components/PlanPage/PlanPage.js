@@ -203,6 +203,7 @@ export default function PlanPage({
   }
 
   const goalLabel = GOAL_OPTIONS.find((o) => o.key === prefs.goal)?.label || '';
+  // eslint-disable-next-line no-unused-vars
   const dayCount = getDayCount(prefs.frequency);
   const currentDay = savedPlan ? (savedPlan[activeDay] ?? savedPlan[0]) : null;
 
@@ -247,6 +248,7 @@ export default function PlanPage({
     return (sets * ((ex.reps || 10) * 4) + sets * restSec) / 60;
   }
 
+  // eslint-disable-next-line no-unused-vars
   const estMinutes = sessionExercises.length > 0
     ? Math.round(sessionExercises.reduce((sum, ex) => sum + exDurationMinutes(ex), 0))
     : 0;
@@ -305,6 +307,7 @@ export default function PlanPage({
     Array.from({ length: ex.sets || 1 }, (_, si) => ({ ei }))
   );
   const currentStep = steps[currentStepIdx] || steps[steps.length - 1] || { ei: 0 };
+  // eslint-disable-next-line no-unused-vars
   const completedExercisesCount = currentDay?.completed ? totalExercisesCount : currentStep.ei;
   
   const progressPct = currentDay?.completed 

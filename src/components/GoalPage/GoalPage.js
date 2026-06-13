@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import DashboardLayout from '../Layout/DashboardLayout';
-import WeeklyHabitRing from '../ProgressPage/WeeklyHabitRing';
+
 import { getLevelProgress, ALL_BADGES, RARITY_STYLES } from '../../utils/xp';
 import {
 	Flame, Activity, Calendar, Dumbbell, Target, Shield,
@@ -76,80 +76,6 @@ function MilestoneJourney({ milestones, title }) {
 	);
 }
 
-
-function NextBadgeSpotlight({ unlockedBadgeIds, history, streak, completedQuestLog, xp }) {
-	const nextBadge = useMemo(() => {
-		const locked = ALL_BADGES.filter(b => !unlockedBadgeIds.includes(b.id));
-		if (locked.length === 0) return null;
-
-
-		const scored = locked.map(badge => {
-			let closeness = 0;
-			try {
-				const h = history || [];
-				if (badge.id === 'first_spark') closeness = Math.min(1, h.length / 1);
-				else if (badge.id === 'three_streak') closeness = Math.min(1, streak / 3);
-				else if (badge.id === 'week_warrior') closeness = Math.min(1, streak / 7);
-				else if (badge.id === 'ten_sessions') closeness = Math.min(1, h.length / 10);
-				else if (badge.id === 'twenty_five_sessions') closeness = Math.min(1, h.length / 25);
-				else if (badge.id === 'inferno') closeness = Math.min(1, streak / 14);
-				else if (badge.id === 'iron_will') closeness = Math.min(1, streak / 30);
-				else if (badge.id === 'centurion') closeness = Math.min(1, h.length / 50);
-				else if (badge.id === 'early_bird') closeness = Math.min(1, h.filter(x => x.completedAt && new Date(x.completedAt).getHours() < 12).length / 5);
-				else if (badge.id === 'quest_master') closeness = Math.min(1, (completedQuestLog?.length || 0) / 10);
-				else if (badge.id === 'legend_status') closeness = Math.min(1, xp / 1400);
-				else if (badge.id === 'comeback_kid') closeness = 0.1;
-				else closeness = 0;
-			} catch { closeness = 0; }
-			return { badge, closeness };
-		}).filter(x => x.closeness > 0);
-
-		if (scored.length === 0) return locked[0] ? { badge: locked[0], closeness: 0 } : null;
-		scored.sort((a, b) => b.closeness - a.closeness);
-		return scored[0];
-	}, [unlockedBadgeIds, history, streak, completedQuestLog, xp]);
-
-	if (!nextBadge) return (
-		<div className="next-badge-spotlight">
-			<span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>All badges unlocked!</span>
-		</div>
-	);
-
-	const { badge, closeness } = nextBadge;
-	const style = RARITY_STYLES[badge.rarity];
-	const BadgeIcon = ICON_MAP[badge.icon] || Star;
-	const pct = Math.round(closeness * 100);
-
-	return (
-		<div className="next-badge-spotlight" style={{ borderColor: style.border }}>
-			<div className="next-badge-header">
-				<div style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', fontWeight: '700' }}>
-					Next achievement
-				</div>
-				<span style={{ fontSize: '0.65rem', color: style.color, fontWeight: '700', background: style.bg, padding: '2px 8px', borderRadius: '10px' }}>
-					{badge.rarity}
-				</span>
-			</div>
-			<div className="next-badge-body">
-				<div className="next-badge-icon-wrap" style={{ background: style.bg, border: `1px solid ${style.border}` }}>
-					<BadgeIcon size={22} color={style.color} />
-				</div>
-				<div style={{ flex: 1, minWidth: 0 }}>
-					<div style={{ fontWeight: '700', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '2px' }}>
-						{badge.name}
-					</div>
-					<div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>{badge.desc}</div>
-					<div className="next-badge-bar-wrap">
-						<div className="next-badge-bar-track">
-							<div className="next-badge-bar-fill" style={{ width: `${pct}%`, background: style.color, boxShadow: `0 0 8px ${style.color}55` }} />
-						</div>
-						<span style={{ fontSize: '0.68rem', color: style.color, fontWeight: '700', flexShrink: 0 }}>{pct}%</span>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-}
 
 
 export default function GoalPage({
@@ -263,6 +189,7 @@ export default function GoalPage({
 	}, [totalSessions, currentStreak, daysPerWeek, consistentWeeks, xp, unlockedBadgeIds.length, thisWeekCount]);
 
 	const targetAreas = prefs?.targetAreas ?? [];
+	// eslint-disable-next-line no-unused-vars
 	const injuries = prefs?.injuries ?? [];
 
 	const [isEditingProfile, setIsEditingProfile] = useState(false);
