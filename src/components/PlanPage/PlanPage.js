@@ -295,12 +295,12 @@ export default function PlanPage({
   }
 
   
-  const totalExercisesCount = sessionExercises.length;
+
   
   const steps = sessionExercises.flatMap((ex, ei) =>
     Array.from({ length: ex.sets || 1 }, (_, si) => ({ ei }))
   );
-  const currentStep = steps[currentStepIdx] || steps[steps.length - 1] || { ei: 0 };
+
   
   
   
