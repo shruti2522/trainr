@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import './PlanPage.css';
-import { filterExercises, inferLevel, getDayCount } from '../../filterExercises';
+import { filterExercises, inferLevel } from '../../filterExercises';
 import { capitalize } from '../../utils/helpers';
 import { generatePlan } from '../../services/geminiService';
 import { GOAL_OPTIONS } from '../../utils/constants';
@@ -156,7 +156,7 @@ export default function PlanPage({
     if (filtered.length > 0) fetchPlan();
     else setIsLoading(false);
     return () => controller.abort();
-  }, [filtered, level, score, savedPlan, setSavedPlan]); 
+  }, [filtered, level, score, savedPlan, setSavedPlan, prefs, exercises]);
 
   useEffect(() => {
     if (!savedPlan || savedPlan.length === 0) return;
@@ -203,8 +203,6 @@ export default function PlanPage({
   }
 
   const goalLabel = GOAL_OPTIONS.find((o) => o.key === prefs.goal)?.label || '';
-  
-  const dayCount = getDayCount(prefs.frequency);
   const currentDay = savedPlan ? (savedPlan[activeDay] ?? savedPlan[0]) : null;
 
   if (!prefs) return null;
@@ -248,10 +246,6 @@ export default function PlanPage({
     return (sets * ((ex.reps || 10) * 4) + sets * restSec) / 60;
   }
 
-  
-  const estMinutes = sessionExercises.length > 0
-    ? Math.round(sessionExercises.reduce((sum, ex) => sum + exDurationMinutes(ex), 0))
-    : 0;
   const totalSets = sessionExercises.reduce((sum, ex) => sum + (ex?.sets || 0), 0);
   const totalReps = sessionExercises.reduce((sum, ex) => sum + ((ex?.sets || 0) * (ex?.reps || 0)), 0);
   const totalKcal = sessionExercises.reduce((sum, ex) => sum + estimateCalories(ex), 0);
@@ -308,7 +302,7 @@ export default function PlanPage({
   );
   const currentStep = steps[currentStepIdx] || steps[steps.length - 1] || { ei: 0 };
   
-  const completedExercisesCount = currentDay?.completed ? totalExercisesCount : currentStep.ei;
+  
   
   const progressPct = currentDay?.completed 
     ? 100 
