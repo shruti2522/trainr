@@ -182,8 +182,7 @@ export default function GoalPage({
 	}, [totalSessions, currentStreak, daysPerWeek, consistentWeeks, xp, unlockedBadgeIds.length, thisWeekCount]);
 
 	const targetAreas = prefs?.targetAreas ?? [];
-	
-	const injuries = prefs?.injuries ?? [];
+
 
 	const [isEditingProfile, setIsEditingProfile] = useState(false);
 	const [editPrefs, setEditPrefs] = useState(prefs || {});
