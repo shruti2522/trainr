@@ -17,12 +17,37 @@
   --c-text-secondary: #b0b0b0;
   --c-text-muted:     #666666;
 
+  --c-border-focus:   rgba(255, 255, 255, 0.4);
+  --c-border-hover:   rgba(255, 255, 255, 0.35);
+
   --radius-bubble:    12px;
   --radius-chip:      6px;
   --radius-input:     8px;
 
-  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-body: 'SamsungSans', 'Samsung Sans', 'Outfit', -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Mono', monospace;
+}
+
+[data-theme='light'] {
+  --c-accent:         #000000;
+  --c-accent-dim:     rgba(0, 0, 0, 0.05);
+  --c-accent-faint:   rgba(0, 0, 0, 0.02);
+  --c-accent-glow:    rgba(0, 0, 0, 0.08);
+
+  --c-bg:             #ffffff;
+  --c-surface:        #f8fafc;
+  --c-surface-raised: #f1f5f9;
+  --c-surface-hover:  #e2e8f0;
+
+  --c-border:         rgba(0, 0, 0, 0.08);
+  --c-border-mid:     rgba(0, 0, 0, 0.12);
+  --c-border-accent:  rgba(0, 0, 0, 0.2);
+  --c-border-focus:   rgba(0, 0, 0, 0.4);
+  --c-border-hover:   rgba(0, 0, 0, 0.35);
+
+  --c-text-primary:   #0f172a;
+  --c-text-secondary: #475569;
+  --c-text-muted:     #94a3b8;
 }
 
 .chat-container {
@@ -238,7 +263,7 @@
 }
 
 .chat-input:focus {
-  border-color: rgba(255, 255, 255, 0.4);
+  border-color: var(--c-border-focus);
   background: var(--c-surface-raised);
 }
 
@@ -253,8 +278,8 @@
 
 .chat-send-btn {
   background: var(--c-accent-dim);
-  color: var(--c-accent);
-  border: 1px solid var(--c-border-accent);
+  color: #3b82f6;
+  border: 1px solid #3b82f6;
   width: 40px;
   height: 40px;
   border-radius: var(--radius-input);
@@ -273,8 +298,9 @@
 }
 
 .chat-send-btn:hover:not(:disabled) {
-  background: var(--c-accent-glow);
-  border-color: rgba(255, 255, 255, 0.35);
+  background: #3b82f6;
+  border-color: #ffffff;
+  color: #ffffff;
 }
 
 .chat-send-btn:disabled {

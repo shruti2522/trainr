@@ -8,6 +8,7 @@ export const FREQUENCY_OPTIONS = [
 
 export const DURATION_OPTIONS = [
   { key: 'under_6m', label: 'Under 6 months', desc: 'Still building movement patterns', points: 1 },
+  { key: 'returning', label: 'Returning after a break', desc: 'Rebuilding base, taking it easy initially', points: 1 },
   { key: '6m_2y', label: '6 months – 2 years', desc: 'Comfortable, making steady progress', points: 2 },
   { key: '2y_plus', label: '2+ years', desc: 'Established base, slower gains', points: 3 },
 ];

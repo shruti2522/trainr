@@ -67,7 +67,16 @@ function App() {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [theme, setTheme] = useLocalStorage('fs_theme', 'dark');
   const prevIsMobile = useRef(null);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = useCallback(() => {
+    setTheme(t => t === 'dark' ? 'light' : 'dark');
+  }, [setTheme]);
 
   
   const streak = calculateStreak(history);
@@ -78,12 +87,17 @@ function App() {
     if (!history) return;
     const currentUnlocked = getUnlockedBadges(history, streak, completedQuests);
     const newlyUnlocked = currentUnlocked.filter(id => !unlockedBadges.includes(id));
-    if (newlyUnlocked.length > 0) {
+    const removedBadges = unlockedBadges.filter(id => !currentUnlocked.includes(id));
+    
+    // Auto-sync badges if there's new badges OR if we somehow have badges that shouldn't be unlocked (e.g. wiped history)
+    if (newlyUnlocked.length > 0 || removedBadges.length > 0) {
       setUnlockedBadges(currentUnlocked);
-      import('./utils/xp').then(({ ALL_BADGES }) => {
-        const fullBadges = newlyUnlocked.map(id => ALL_BADGES.find(b => b.id === id)).filter(Boolean);
-        setNewBadgeQueue(prev => [...prev, ...fullBadges]);
-      });
+      if (newlyUnlocked.length > 0) {
+        import('./utils/xp').then(({ ALL_BADGES }) => {
+          const fullBadges = newlyUnlocked.map(id => ALL_BADGES.find(b => b.id === id)).filter(Boolean);
+          setNewBadgeQueue(prev => [...prev, ...fullBadges]);
+        });
+      }
     }
   }, [history, streak, completedQuests, unlockedBadges, setUnlockedBadges]);
 
@@ -177,8 +191,10 @@ function App() {
     setHabitContract(null);
     setCurrentWeek(null);
     setMomentum(null);
+    setCompletedQuests([]);
+    setUnlockedBadges([]);
     setView('wizard');
-  }, [setPrefs, setSavedPlan, setHistory, setWorkoutElapsed, setHabitContract, setCurrentWeek, setMomentum, setView]);
+  }, [setPrefs, setSavedPlan, setHistory, setWorkoutElapsed, setHabitContract, setCurrentWeek, setMomentum, setCompletedQuests, setUnlockedBadges, setView]);
 
   const handleStartWeek = useCallback(() => {
     setShowCommitmentAfterPlan(false);
@@ -201,7 +217,7 @@ function App() {
   const handleUpdateSessionProgress = useCallback((stepIdx, phase) => {
     setSavedPlan(prev => {
       if (!prev) return prev;
-      return prev.map(d => d.key === sessionDay.key ? { ...d, progress: { stepIdx, phase } } : d);
+      return prev.map(d => d.key === sessionDay.key ? { ...d, progress: { stepIdx, phase, mode: sessionDay.mode || 'full' } } : d);
     });
   }, [sessionDay, setSavedPlan]);
 
@@ -246,6 +262,8 @@ function App() {
     onOpenSidebar: () => setIsSidebarOpen(true),
     onCloseSidebar: () => setIsSidebarOpen(false),
     xp: totalXP,
+    theme,
+    onToggleTheme: toggleTheme,
   };
 
   
@@ -282,6 +300,7 @@ function App() {
             prefs={prefs}
             savedPlan={savedPlan}
             setSavedPlan={setSavedPlan}
+            onUpdatePrefs={setPrefs}
             onReset={handleReset}
             onStartSession={handleStartSession}
             onViewChange={setView}
@@ -324,6 +343,8 @@ function App() {
             onViewChange={setView}
             unlockedBadgeIds={unlockedBadges}
             xp={totalXP}
+            onUpdatePrefs={setPrefs}
+            onUpdateHabitContract={setHabitContract}
             {...sidebarProps}
           />
         ) : view === 'history' ? (
@@ -344,7 +365,24 @@ function App() {
             elapsed={workoutElapsed}
             dayLabel={sessionDay?.label || ''}
             onBackToPlan={handleBackToPlan}
-            onHome={() => setView('hero')}
+            onHome={() => {
+              if (sessionDay) {
+                setSavedPlan(prev => {
+                  if (!prev) return prev;
+                  return prev.map(d => d.key === sessionDay.key ? { ...d, completed: false, progress: { stepIdx: 0, phase: 'warmup', mode: d.progress?.mode || 'full' } } : d);
+                });
+                setHistory(prev => {
+                  if (!prev || prev.length === 0) return prev;
+                  const last = prev[prev.length - 1];
+                  if (last.dayLabel === sessionDay.label && last.date === new Date().toISOString().slice(0, 10)) {
+                    return prev.slice(0, -1);
+                  }
+                  return prev;
+                });
+              }
+              setSessionDay(null);
+              setView('results');
+            }}
             onViewChange={setView}
             history={history}
             savedPlan={savedPlan}

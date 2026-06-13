@@ -23,6 +23,7 @@ export default function CommitmentPage({
     build_muscle: 'Build Muscle',
     improve_endurance: 'Improve Endurance',
     general_fitness: 'General Fitness',
+    increase_flexibility: 'Increase Flexibility',
   };
 
   const goalLabel = goalOptions[prefs.goal] || prefs.goal;
@@ -64,7 +65,7 @@ export default function CommitmentPage({
           
           <div className="commitment-left-col">
             <div className="commitment-header">
-              <div className="commitment-eyebrow">Week {weekNumber} · Starting out</div>
+              <div className="commitment-eyebrow">Week {weekNumber} <span style={{ opacity: 0.3 }}>|</span> Starting out</div>
               <h1 className="commitment-title">Your customized<br />plan</h1>
               <p className="commitment-sub">This is what the next seven days look like. Read it over before you lock it in.</p>
             </div>

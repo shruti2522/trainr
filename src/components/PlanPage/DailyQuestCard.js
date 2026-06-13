@@ -48,7 +48,7 @@ export default function DailyQuestCard({ quest, isDone, onComplete, compact = fa
         </div>
         <span style={{
           fontSize: '0.65rem', fontWeight: '700',
-          color: isDone ? 'var(--text-muted)' : '#4ade80',
+          color: isDone ? 'var(--text-muted)' : 'var(--accent-success)',
           flexShrink: 0,
         }}>
           +{quest.xp}
@@ -105,11 +105,11 @@ export default function DailyQuestCard({ quest, isDone, onComplete, compact = fa
       </div>
       <div style={{
         display: 'flex', alignItems: 'center', gap: '4px',
-        background: isDone ? 'var(--bg-elevated)' : 'rgba(74,222,128,0.1)',
-        border: `1px solid ${isDone ? 'var(--border-subtle)' : 'rgba(74,222,128,0.2)'}`,
+        background: isDone ? 'var(--bg-elevated)' : 'rgba(59,130,246,0.1)',
+        border: `1px solid ${isDone ? 'var(--border-subtle)' : 'rgba(59,130,246,0.2)'}`,
         padding: '4px 10px', borderRadius: '20px', flexShrink: 0,
       }}>
-        <span style={{ fontSize: '0.7rem', fontWeight: '800', color: isDone ? 'var(--text-secondary)' : '#4ade80' }}>
+        <span style={{ fontSize: '0.7rem', fontWeight: '800', color: isDone ? 'var(--text-secondary)' : 'var(--accent-success)' }}>
           +{quest.xp} XP
         </span>
       </div>

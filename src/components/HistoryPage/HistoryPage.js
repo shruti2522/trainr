@@ -58,6 +58,9 @@ export default function HistoryPage({
   isMobile,
   onOpenSidebar,
   onCloseSidebar,
+  theme = 'dark',
+  onToggleTheme,
+  xp = 0,
 }) {
   const sorted = [...(history ?? [])].sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -74,6 +77,9 @@ export default function HistoryPage({
       isMobile={isMobile}
       onOpenSidebar={onOpenSidebar}
       onCloseSidebar={onCloseSidebar}
+      theme={theme}
+      onToggleTheme={onToggleTheme}
+      xp={xp}
     >
       <div className="inner-page animate-fade-in">
         <div className="inner-page-header">

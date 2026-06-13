@@ -39,11 +39,12 @@ export function hasWorkedOutToday(history) {
 
 
 export const LEVELS = [
-  { index: 0, name: 'Rookie',   icon: 'seedling', color: '#64748b', minXP: 0,    maxXP: 150  },
-  { index: 1, name: 'Athlete',  icon: 'zap',      color: '#3b82f6', minXP: 150,  maxXP: 400  },
-  { index: 2, name: 'Warrior',  icon: 'flame',    color: '#8b5cf6', minXP: 400,  maxXP: 800  },
-  { index: 3, name: 'Champion', icon: 'sword',    color: '#f59e0b', minXP: 800,  maxXP: 1400 },
-  { index: 4, name: 'Legend',   icon: 'trophy',   color: '#10b981', minXP: 1400, maxXP: Infinity },
+  { index: 0, name: 'Starter',  icon: 'seedling', color: '#94a3b8', minXP: 0,    maxXP: 50   },
+  { index: 1, name: 'Rookie',   icon: 'zap',      color: '#64748b', minXP: 50,   maxXP: 150  },
+  { index: 2, name: 'Athlete',  icon: 'flame',    color: '#3b82f6', minXP: 150,  maxXP: 500  },
+  { index: 3, name: 'Warrior',  icon: 'sword',    color: '#8b5cf6', minXP: 500,  maxXP: 1000 },
+  { index: 4, name: 'Champion', icon: 'trophy',   color: '#f59e0b', minXP: 1000, maxXP: 2000 },
+  { index: 5, name: 'Legend',   icon: 'trophy',   color: '#3b82f6', minXP: 2000, maxXP: Infinity },
 ];
 
 export const XP_PER_SESSION = 50;
@@ -214,8 +215,9 @@ const QUEST_POOL = [
   
   { id: 'no_skip',        title: 'No rest for the driven',   desc: 'Show up and complete at least one set',        xp: 10, icon: 'check-circle', autoComplete: true },
   
-  { id: 'streak_3',       title: 'Build a 3-day streak',     desc: 'Work out 3 days in a row',                    xp: 30, icon: 'trending-up', streakRequired: 3, autoComplete: true },
-  { id: 'streak_7',       title: 'Hit a 7-day streak',       desc: 'Maintain 7 consecutive workout days',          xp: 100, icon: 'star', streakRequired: 7, autoComplete: true },
+  { id: 'drink_water',    title: 'Hydration Station',        desc: 'Drink at least 2 liters of water today',      xp: 15, icon: 'droplet', autoComplete: false },
+  { id: 'sleep_well',     title: 'Rest & Recover',           desc: 'Get 8+ hours of sleep tonight',               xp: 15, icon: 'moon', autoComplete: false },
+  { id: 'stretch_5m',     title: 'Stay Limber',              desc: 'Do 5 minutes of freestyle stretching',        xp: 15, icon: 'activity', autoComplete: false },
   
   { id: 'add_exercise',   title: 'Customise your plan',      desc: 'Add a new exercise to today\'s session',      xp: 10, icon: 'plus-circle', autoComplete: false },
   { id: 'shuffle_one',    title: 'Mix it up',                desc: 'Shuffle at least one exercise today',          xp: 10, icon: 'shuffle', autoComplete: false },
@@ -241,7 +243,7 @@ export function getDailyQuests(dateStr) {
 
   
   const pool3 = QUEST_POOL.filter(q =>
-    ['no_skip', 'streak_3', 'streak_7'].includes(q.id) &&
+    ['no_skip', 'drink_water', 'sleep_well', 'stretch_5m'].includes(q.id) &&
     q.id !== q1.id && q.id !== q2?.id
   );
   const q3 = pool3[seededRandom(seed, 2) % pool3.length];
@@ -276,7 +278,7 @@ export function getTodayCompletedQuestIds(completedQuestLog, history, streak) {
 }
 
 export const RARITY_STYLES = {
-  common:    { color: '#9ba5b5', bg: 'rgba(155, 165, 181, 0.1)',  border: 'rgba(155, 165, 181, 0.2)', label: 'Common'    },
-  rare:      { color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)',   border: 'rgba(59, 130, 246, 0.25)', label: 'Rare'      },
+  common:    { color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)',   border: 'rgba(59, 130, 246, 0.25)', label: 'Common'    },
+  rare:      { color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)',   border: 'rgba(139, 92, 246, 0.25)', label: 'Rare'      },
   legendary: { color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)',  border: 'rgba(245, 158, 11, 0.3)',  label: 'Legendary' },
 };

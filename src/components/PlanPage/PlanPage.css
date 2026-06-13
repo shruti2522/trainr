@@ -1,22 +1,23 @@
 
 
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+
 
 :root {
   --plan-bg: #0f0f0d;
   --plan-bg-panel: #181816;
   --plan-bg-card: #1c1c1a;
   --plan-bg-raised: #212120;
-  --plan-border: rgba(255,255,255,0.07);
-  --plan-border-med: rgba(255,255,255,0.12);
-  --plan-green: #4ade80;
-  --plan-green-dim: rgba(74,222,128,0.1);
-  --plan-green-faint: rgba(74,222,128,0.05);
+  --plan-border: rgba(255, 255, 255, 0.08);
+  --plan-border-med: rgba(255, 255, 255, 0.15);
+  --plan-green: #3b82f6;
+  --plan-green-dim: rgba(59,130,246,0.1);
+  --plan-green-faint: rgba(59,130,246,0.05);
   --plan-text: #f0ede8;
   --plan-text-mid: #9a9690;
   --plan-text-dim: #5c5a56;
-  --plan-font-display: 'Barlow Condensed', sans-serif;
-  --plan-font-body: 'Inter', sans-serif;
+  --plan-font-display: 'SamsungSans', 'Samsung Sans', 'Outfit', -apple-system, sans-serif;
+  --plan-font-body:    'SamsungSans', 'Samsung Sans', 'Outfit', -apple-system, sans-serif;
 }
 
 
@@ -84,7 +85,7 @@
   border: none;
   border-radius: 7px;
   background: var(--plan-green);
-  color: #0f0f0d;
+  color: var(--bg-base);
   font-family: var(--plan-font-display);
   font-size: 1rem;
   font-weight: 700;
@@ -114,7 +115,7 @@
 
 .plan-btn-secondary:hover {
   color: var(--plan-text);
-  border-color: rgba(255,255,255,0.2);
+  border-color: var(--border-subtle);
 }
 
 .plan-btn-icon {
@@ -134,7 +135,7 @@
 
 .plan-btn-icon:hover {
   color: var(--plan-text);
-  border-color: rgba(255,255,255,0.2);
+  border-color: var(--border-subtle);
 }
 
 .plan-btn-small {
@@ -226,13 +227,14 @@
 
 .plan-ex-tag {
   font-size: 0.62rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--plan-text-dim);
+  color: var(--plan-green);
+  background: transparent;
   padding: 2px 6px;
-  border: 1px solid var(--plan-border);
-  border-radius: 3px;
+  border: 1px solid var(--plan-green);
+  border-radius: 4px;
   flex-shrink: 0;
 }
 
@@ -308,7 +310,7 @@
   padding: 14px 16px;
   border-radius: 12px;
   background: var(--plan-bg-card);
-  border: 1px solid var(--plan-border);
+  border: 1.5px solid var(--plan-border-med);
   margin-bottom: 16px;
 }
 
@@ -336,7 +338,7 @@
   margin: 0 0 2px 0;
   font-size: 0.72rem;
   font-weight: 700;
-  color: rgba(255,255,255,0.4);
+  color: var(--plan-text-mid);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -350,7 +352,7 @@
 
 .plan-ring-detail {
   font-size: 0.72rem;
-  color: rgba(255,255,255,0.4);
+  color: var(--plan-text-mid);
 }
 
 .plan-ring-badge {
@@ -360,7 +362,7 @@
   color: var(--plan-green);
   padding: 2px 8px;
   border-radius: 20px;
-  border: 1px solid rgba(74,222,128,0.2);
+  border: 1px solid var(--plan-green-faint);
   display: inline-block;
   margin-right: 8px;
 }
@@ -503,7 +505,7 @@
   margin-bottom: 6px;
   background: var(--plan-bg-card);
   transition: all 0.2s ease;
-  border: 1px solid transparent;
+  border: 1.5px solid var(--plan-border-med);
 }
 
 .plan-mode-row:hover {
@@ -583,8 +585,8 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #000;
-  background: #fff;
+  color: var(--bg-base);
+  background: var(--plan-text);
   border: none;
   padding: 2px 6px;
   border-radius: 4px;
@@ -693,8 +695,8 @@
 
 
 .plan-day-summary {
-  background: #0f0f0d;
-  border: 1px solid rgba(255,255,255,0.07);
+  background: var(--plan-bg-card);
+  border: 1px solid var(--plan-border);
   border-radius: 14px;
   padding: 14px 20px;
   margin-bottom: 14px;
@@ -717,7 +719,7 @@
   font-family: var(--plan-font-display);
   font-size: 0.95rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--plan-text);
   margin: 0 0 2px 0;
   display: flex;
   align-items: center;
@@ -726,7 +728,7 @@
 
 .plan-day-summary-meta {
   font-size: 0.73rem;
-  color: rgba(255,255,255,0.4);
+  color: var(--plan-text-mid);
   letter-spacing: 0.01em;
   margin: 0;
 }
@@ -734,11 +736,11 @@
 .plan-day-summary-badge {
   font-size: 0.62rem;
   font-weight: 700;
-  background: rgba(74,222,128,0.1);
+  background: var(--plan-green-dim);
   color: var(--plan-green);
   padding: 2px 8px;
   border-radius: 20px;
-  border: 1px solid rgba(74,222,128,0.2);
+  border: 1px solid var(--plan-green-faint);
   letter-spacing: 0.04em;
 }
 
@@ -757,7 +759,7 @@
 .plan-day-summary-stat {
   text-align: center;
   padding-right: 20px;
-  border-right: 1px solid rgba(255,255,255,0.07);
+  border-right: 1px solid var(--plan-border);
 }
 
 .plan-day-summary-stat:last-child {
@@ -769,7 +771,7 @@
   font-family: var(--plan-font-display);
   font-size: 1.05rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--plan-text);
   line-height: 1;
   margin: 0;
 }
@@ -777,7 +779,7 @@
 .plan-day-summary-stat-lbl {
   font-size: 0.62rem;
   font-weight: 600;
-  color: rgba(255,255,255,0.4);
+  color: var(--plan-text-mid);
   letter-spacing: 0.07em;
   margin-top: 3px;
   text-transform: uppercase;
@@ -788,7 +790,7 @@
   border-radius: 9px;
   border: none;
   background: var(--plan-green);
-  color: #0f0f0d;
+  color: var(--bg-base);
   font-family: var(--plan-font-display);
   font-size: 0.82rem;
   font-weight: 700;
@@ -797,7 +799,7 @@
   transition: opacity 0.15s;
   white-space: nowrap;
   padding-left: 20px;
-  border-left: 1px solid rgba(255,255,255,0.07);
+  border-left: 1px solid var(--plan-border);
   margin-left: 20px;
 }
 
@@ -847,7 +849,7 @@
     margin-left: 0;
     padding-left: 12px;
     border-left: none;
-    border-top: 1px solid rgba(255,255,255,0.07);
+    border-top: 1px solid var(--plan-border);
     margin-top: 12px;
     padding-top: 12px;
   }

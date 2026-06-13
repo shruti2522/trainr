@@ -8,31 +8,41 @@ export default function WeeklyHabitRing({
   size = 'md',
   showLabel = true,
 }) {
-  const { completed, slots, todaySlotIdx } = useMemo(() => {
+  const { completed, slots, slotLabels, todaySlotIdx } = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    
-    const anchorDOW = 1; 
+    const anchorDOW = 1; // Monday
 
-    
     const todayDOW = today.getDay();
     const daysBack = (todayDOW - anchorDOW + 7) % 7;
     const windowStart = new Date(today);
     windowStart.setDate(today.getDate() - daysBack);
 
-    const slots = Array.from({ length: 7 }, (_, i) => {
+    const toLocalISO = (d) => {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    };
+
+    const DOW = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    const slots = [];
+    const slotLabels = [];
+
+    for (let i = 0; i < 7; i++) {
       const d = new Date(windowStart);
       d.setDate(windowStart.getDate() + i);
-      return d.toISOString().slice(0, 10);
-    });
+      slots.push(toLocalISO(d));
+      slotLabels.push(DOW[d.getDay()]);
+    }
 
     const histSet = new Set((history || []).map(h => h.date));
-    const todayStr = today.toISOString().slice(0, 10);
+    const todayStr = toLocalISO(today);
     const todaySlotIdx = slots.indexOf(todayStr);
     const completed = slots.filter(d => histSet.has(d)).length;
 
-    return { completed, slots, todaySlotIdx };
+    return { completed, slots, slotLabels, todaySlotIdx };
   }, [history]);
 
   const historyDates = useMemo(() => new Set((history || []).map(h => h.date)), [history]);
@@ -49,8 +59,6 @@ export default function WeeklyHabitRing({
   const pct = Math.min(1, completed / Math.max(1, daysPerWeek));
   const strokeOffset = circumference - circumference * pct;
 
-  const DOW = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-  const slotLabels = slots.map(d => DOW[new Date(d).getDay()]);
   const dotSize = size === 'sm' ? 14 : 18;
 
   return (
@@ -61,11 +69,11 @@ export default function WeeklyHabitRing({
         <svg width={cfg.size} height={cfg.size} viewBox={`0 0 ${cfg.size} ${cfg.size}`}>
           <circle
             cx={cfg.size / 2} cy={cfg.size / 2} r={cfg.r}
-            fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={cfg.strokeW}
+            fill="none" stroke="var(--border-subtle)" strokeWidth={cfg.strokeW}
           />
           <circle
             cx={cfg.size / 2} cy={cfg.size / 2} r={cfg.r}
-            fill="none" stroke="#4ade80" strokeWidth={cfg.strokeW}
+            fill="none" stroke="var(--accent-success)" strokeWidth={cfg.strokeW}
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={strokeOffset}
@@ -81,13 +89,13 @@ export default function WeeklyHabitRing({
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         }}>
           {isComplete ? (
-            <span style={{ fontSize: cfg.fontSize, lineHeight: 1 }}>✓</span>
+            <span style={{ fontSize: cfg.fontSize, lineHeight: 1, color: 'var(--accent-success)' }}>✓</span>
           ) : (
             <>
-              <span style={{ fontSize: cfg.fontSize, fontWeight: '800', color: '#fff', lineHeight: 1, fontFamily: 'var(--font-heading)' }}>
+              <span style={{ fontSize: cfg.fontSize, fontWeight: '800', color: 'var(--text-primary)', lineHeight: 1, fontFamily: 'var(--font-heading)' }}>
                 {completed}
               </span>
-              <span style={{ fontSize: cfg.subSize, color: 'rgba(255,255,255,0.45)', marginTop: '2px' }}>
+              <span style={{ fontSize: cfg.subSize, color: 'var(--text-muted)', marginTop: '2px' }}>
                 of {daysPerWeek}
               </span>
             </>
@@ -107,16 +115,16 @@ export default function WeeklyHabitRing({
               <div style={{
                 width: dotSize, height: dotSize, borderRadius: '50%',
                 background: done
-                  ? '#4ade80'
-                  : isToday ? 'transparent' : 'rgba(255,255,255,0.1)',
-                border: isToday && !done ? '1.5px solid rgba(255,255,255,0.55)' : 'none',
+                  ? 'var(--accent-success)'
+                  : isToday ? 'transparent' : 'var(--border-subtle)',
+                border: isToday && !done ? '1.5px solid var(--text-muted)' : 'none',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 opacity: isFuture ? 0.35 : 1,
                 transition: 'all 0.2s ease',
               }}>
                 {done && (
                   <svg width={dotSize * 0.55} height={dotSize * 0.55} viewBox="0 0 10 10" fill="none">
-                    <polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#000" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    <polyline points="1.5,5 4,7.5 8.5,2.5" stroke="var(--bg-surface)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 )}
               </div>
@@ -124,7 +132,7 @@ export default function WeeklyHabitRing({
                 <span style={{
                   fontSize: '0.55rem',
                   fontWeight: isToday ? '700' : '400',
-                  color: isToday ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.28)',
+                  color: isToday ? 'var(--text-secondary)' : 'var(--text-muted)',
                 }}>
                   {slotLabels[i]}
                 </span>
@@ -139,15 +147,15 @@ export default function WeeklyHabitRing({
         <div style={{ textAlign: 'center' }}>
           {isComplete ? (
             <span style={{
-              fontSize: '0.72rem', fontWeight: '700', color: '#4ade80',
-              background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.25)',
+              fontSize: '0.72rem', fontWeight: '700', color: 'var(--accent-success)',
+              background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.25)',
               padding: '3px 10px', borderRadius: '20px', letterSpacing: '0.06em',
               textTransform: 'uppercase',
             }}>
               ✦ Week Complete!
             </span>
           ) : (
-            <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)' }}>
+            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
               {daysPerWeek - completed} session{daysPerWeek - completed !== 1 ? 's' : ''} left this week
             </span>
           )}

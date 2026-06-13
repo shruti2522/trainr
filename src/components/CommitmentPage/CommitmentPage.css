@@ -4,14 +4,14 @@
   --commitment-bg-raised: #212120;
   --commitment-border: rgba(255,255,255,0.07);
   --commitment-border-med: rgba(255,255,255,0.12);
-  --commitment-green: #4ade80;
-  --commitment-green-dim: rgba(74,222,128,0.12);
-  --commitment-green-faint: rgba(74,222,128,0.06);
+  --commitment-green: #3b82f6;
+  --commitment-green-dim: rgba(59,130,246,0.12);
+  --commitment-green-faint: rgba(59,130,246,0.06);
   --commitment-text: #f0ede8;
   --commitment-text-mid: #9a9690;
   --commitment-text-dim: #5c5a56;
-  --commitment-font-display: 'Barlow Condensed', sans-serif;
-  --commitment-font-body: 'Inter', sans-serif;
+  --commitment-font-display: 'SamsungSans', 'Samsung Sans', 'Outfit', -apple-system, sans-serif;
+  --commitment-font-body:    'SamsungSans', 'Samsung Sans', 'Outfit', -apple-system, sans-serif;
 }
 
 *, *::before, *::after {
@@ -294,7 +294,7 @@
   border: none;
   border-radius: 8px;
   background: var(--commitment-green);
-  color: #0f0f0d;
+  color: var(--bg-base);
   font-family: var(--commitment-font-display);
   font-size: 1.15rem;
   font-weight: 700;

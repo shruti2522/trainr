@@ -7,7 +7,7 @@ const STREAK_STATES = [
   { min: 3,  max: 6,  label: 'You\'re on a roll!',  color: '#f97316',         bg: '#ffedd5' },
   { min: 7,  max: 13, label: 'On fire! Keep it up', color: '#ef4444',         bg: '#fee2e2' },
   { min: 14, max: 29, label: 'Unstoppable force',   color: '#ea580c',        bg: '#ffedd5' },
-  { min: 30, max: Infinity, label: 'LEGENDARY streak', color: '#00e676', bg: 'rgba(0, 230, 118, 0.1)' },
+  { min: 30, max: Infinity, label: 'LEGENDARY streak', color: 'var(--accent-success)', bg: 'var(--bg-glass-strong)' },
 ];
 
 function getStreakState(streak) {
@@ -71,7 +71,7 @@ export default function StreakWidget({ streak = 0, workedOutToday = false, compa
         <div style={{
           width: '36px', height: '36px', borderRadius: '50%',
           background: workedOutToday ? 'var(--accent-success)' : 'var(--bg-elevated)',
-          color: workedOutToday ? '#fff' : 'var(--text-muted)',
+          color: workedOutToday ? 'var(--bg-surface)' : 'var(--text-muted)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           transition: 'all 0.3s',
         }}>

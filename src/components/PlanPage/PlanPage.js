@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import './PlanPage.css';
 import { filterExercises, inferLevel, getDayCount } from '../../filterExercises';
 import { capitalize } from '../../utils/helpers';
@@ -11,16 +12,16 @@ import DashboardLayout from "../Layout/DashboardLayout";
 import StreakWidget from './StreakWidget';
 import DailyQuestCard from './DailyQuestCard';
 import { getDailyQuests, isQuestDoneToday } from '../../utils/xp';
-import { Plus, Check } from 'lucide-react';
+import { Plus, Check, AlertTriangle } from 'lucide-react';
 
 const DAY_LABELS = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];
 
-const G = '#4ade80';               
-const G_DIM = 'rgba(74,222,128,0.1)';  
-const G_BORDER = 'rgba(74,222,128,0.2)'; 
-const WHITE_60 = 'rgba(255,255,255,0.6)';
-const WHITE_40 = 'rgba(255,255,255,0.4)';
-const WHITE_10 = 'rgba(255,255,255,0.08)';
+const G = 'var(--plan-green)';               
+const G_DIM = 'var(--plan-green-dim)';  
+const G_BORDER = 'var(--plan-green-faint)'; 
+const WHITE_60 = 'var(--text-secondary)';
+const WHITE_40 = 'var(--text-muted)';
+const WHITE_10 = 'var(--border-subtle)';
 
 function estimateCalories(exercise) {
   const sets = exercise?.sets || 3;
@@ -38,10 +39,11 @@ function estimateCalories(exercise) {
 }
 
 export default function PlanPage({
-  exercises, prefs, savedPlan, setSavedPlan, onReset, onStartSession,
+  exercises, prefs, savedPlan, setSavedPlan, onUpdatePrefs, onReset, onStartSession,
   onViewChange, sidebarOpen, onToggleSidebar, isMobile, onOpenSidebar,
   onCloseSidebar, streak = 0, history = [], completedQuests = [], onCompleteQuest,
   showCommitmentAfterPlan = false, setShowCommitmentAfterPlan,
+  theme = 'dark', onToggleTheme, xp = 0,
 }) {
   const [activeDay, setActiveDay] = useState(0);
   const [showAddPicker, setShowAddPicker] = useState(false);
@@ -53,6 +55,24 @@ export default function PlanPage({
 
   const [isReordering, setIsReordering] = useState(false);
   const [sessionMode, setSessionMode] = useState('full');
+  
+  const [showInjuryModal, setShowInjuryModal] = useState(false);
+  const [injuryInput, setInjuryInput] = useState('');
+
+  const handleReportInjury = () => {
+    if (!injuryInput.trim() || !onUpdatePrefs) {
+      setShowInjuryModal(false);
+      return;
+    }
+    const newInjuries = injuryInput.split(',').map(s => s.trim()).filter(Boolean);
+    const existing = Array.isArray(prefs?.injuries) ? prefs.injuries : [];
+    const combined = Array.from(new Set([...existing, ...newInjuries]));
+    
+    onUpdatePrefs({ ...prefs, injuries: combined });
+    setSavedPlan(null); // Triggers plan regeneration
+    setShowInjuryModal(false);
+    setInjuryInput('');
+  };
 
   const dragItem = useRef();
   const dragOverItem = useRef();
@@ -233,7 +253,9 @@ export default function PlanPage({
   const totalSets = sessionExercises.reduce((sum, ex) => sum + (ex?.sets || 0), 0);
   const totalReps = sessionExercises.reduce((sum, ex) => sum + ((ex?.sets || 0) * (ex?.reps || 0)), 0);
   const totalKcal = sessionExercises.reduce((sum, ex) => sum + estimateCalories(ex), 0);
-  const currentStepIdx = currentDay?.progress?.stepIdx || 0;
+  const isCorrectMode = currentDay?.progress?.mode === sessionMode || (!currentDay?.progress?.mode && sessionMode === 'full');
+  const sessionProgress = isCorrectMode ? currentDay?.progress : null;
+  const currentStepIdx = sessionProgress?.stepIdx || 0;
 
   function handleShuffle(dayIdx, exIdx) {
     setSavedPlan((prev) => {
@@ -317,17 +339,7 @@ export default function PlanPage({
         <div>
           <p className="plan-ring-label">Session Progress</p>
           <p className="plan-ring-session">{currentDay?.label || 'Today'}</p>
-          <div>
-            {currentDay?.completed ? null : currentStepIdx > 0 ? (
-              <span style={{ fontSize: '0.72rem', color: WHITE_40 }}>
-                {completedExercisesCount} / {totalExercisesCount} done
-              </span>
-            ) : (
-              <span style={{ fontSize: '0.72rem', color: WHITE_40 }}>
-                {totalExercisesCount} exercises · ~{estMinutes} min
-              </span>
-            )}
-          </div>
+          
         </div>
       </div>
 
@@ -357,9 +369,9 @@ export default function PlanPage({
             const fullMins = Math.round(allEx.reduce((s, ex) => s + exDurationMinutes(ex), 0));
 
             const modes = [
-              { key: 'full',     label: 'Full session', desc: `${allEx.length} ex · ~${fullMins} min`,                      badge: 'Recommended' },
-              { key: 'quick',    label: 'Quick',        desc: `${quickExs.length} ex · ~${quickMins || 12} min`,             badge: null },
-              { key: 'recovery', label: 'Recovery',     desc: `${recovExs.length} ex · ~${recovMins || 10} min (mobility)`, badge: null },
+              { key: 'full',     label: 'Full session', desc: <>{allEx.length} ex <span style={{ opacity: 0.3 }}>|</span> ~{fullMins} min</>,                      badge: 'Recommended' },
+              { key: 'quick',    label: 'Quick session',        desc: <>{quickExs.length} ex <span style={{ opacity: 0.3 }}>|</span> ~{quickMins || 12} min</>,             badge: null },
+              { key: 'recovery', label: 'Recovery',     desc: <>{recovExs.length} ex <span style={{ opacity: 0.3 }}>|</span> ~{recovMins || 10} min (mobility)</>, badge: null },
             ];
 
             return modes.map((mode) => {
@@ -459,19 +471,28 @@ export default function PlanPage({
       isMobile={isMobile}
       onOpenSidebar={onOpenSidebar}
       onCloseSidebar={onCloseSidebar}
+      theme={theme}
+      onToggleTheme={onToggleTheme}
+      xp={xp}
     >
       <div className="plan-page animate-fade-in" style={{ padding: '20px 24px', maxWidth: '100%' }}>
 
         
         <div className="plan-page-header">
           <div className="plan-page-title-group">
-            <h1 className="plan-page-title">Your Weekly Plan</h1>
+            <h1 className="plan-page-title">This Week's Plan</h1>
             <div className="plan-page-meta">
               <span>{capitalize(level)}</span>
               <span>/</span>
               {goalLabel && <span>{goalLabel}</span>}
-              {goalLabel && <span>/</span>}
-              <span>{dayCount} days a week</span>
+              <button 
+                onClick={() => setShowInjuryModal(true)} 
+                className="btn btn-ghost" 
+                style={{ display: 'inline-flex', alignItems: 'center', padding: '4px 10px', fontSize: '0.75rem', height: 'auto', marginLeft: '12px', color: 'var(--text-secondary)', border: '1px solid var(--border-subtle)', borderRadius: '16px' }}
+              >
+                <AlertTriangle size={14} style={{ marginRight: '6px', color: 'var(--text-muted)' }} />
+                Report Injury
+              </button>
             </div>
           </div>
           <StreakWidget streak={streak} workedOutToday={workedOutToday} compact />
@@ -505,9 +526,6 @@ export default function PlanPage({
                 <h3>
                   {currentDay.label}
                 </h3>
-                <p className="plan-day-summary-meta">
-                  Day {currentDay.dayNumber} · {currentDay.exercises?.length} exercises · ~{estMinutes} min
-                </p>
               </div>
             </div>
 
@@ -528,7 +546,7 @@ export default function PlanPage({
 
               {!currentDay.completed && (
                 <button
-                  onClick={() => onStartSession({ ...currentDay, exercises: sessionExercises })}
+                  onClick={() => onStartSession({ ...currentDay, exercises: sessionExercises, mode: sessionMode, progress: sessionProgress })}
                   className="plan-day-summary-button"
                 >
                   {currentStepIdx > 0 ? 'Resume Session' : 'Start Session'}
@@ -599,7 +617,7 @@ export default function PlanPage({
                       onDragEnter={isReordering ? handleDragEnter : undefined}
                       onDragEnd={isReordering ? handleDragEnd : undefined}
                       caloriesBurned={kcal}
-                      onStartFromHere={() => onStartSession({ ...currentDay, exercises: sessionExercises, startExerciseIdx: exIdx })}
+                      onStartFromHere={() => onStartSession({ ...currentDay, exercises: sessionExercises, startExerciseIdx: exIdx, mode: sessionMode, progress: sessionProgress })}
                     />
                   );
                 })}
@@ -613,6 +631,38 @@ export default function PlanPage({
                 onPick={(ex) => { handleAdd(activeDay, ex); setShowAddPicker(false); }}
                 onClose={() => setShowAddPicker(false)}
               />
+            )}
+
+            {showInjuryModal && createPortal(
+              <div className="modal-overlay">
+                <div className="modal-content animate-pop-in" style={{ maxWidth: '400px' }}>
+                  <div className="modal-header">
+                    <h2 className="modal-title">Report Injury</h2>
+                    <button className="modal-close-btn" onClick={() => setShowInjuryModal(false)}>×</button>
+                  </div>
+                  <div className="modal-body">
+                    <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
+                      Please describe any new injuries or restrictions (e.g. "Knee pain", "Lower back"). We'll instantly adapt your current plan to keep you safe.
+                    </p>
+                    <input
+                      type="text"
+                      autoFocus
+                      placeholder="e.g. Bad shoulder"
+                      value={injuryInput}
+                      onChange={(e) => setInjuryInput(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') handleReportInjury(); }}
+                      style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: 'var(--bg-elevated)', color: 'var(--text-primary)', marginBottom: '20px' }}
+                    />
+                    <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                      <button className="btn" onClick={() => setShowInjuryModal(false)}>Cancel</button>
+                      <button className="btn btn-primary" onClick={handleReportInjury} disabled={!injuryInput.trim()}>
+                        Update Plan
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>,
+              document.body
             )}
           </>
         )}

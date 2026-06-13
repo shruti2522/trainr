@@ -11,7 +11,7 @@ const TARGET_AREA_MUSCLES = {
   full_body: []
 };
 
-export default function LibraryPage({ exercises, onViewChange, savedPlan, setSavedPlan, sidebarOpen, onToggleSidebar, isMobile, onOpenSidebar, onCloseSidebar }) {
+export default function LibraryPage({ exercises, onViewChange, savedPlan, setSavedPlan, sidebarOpen, onToggleSidebar, isMobile, onOpenSidebar, onCloseSidebar, theme = 'dark', onToggleTheme, xp = 0 }) {
   const [toastMsg, setToastMsg] = useState(null);
 
   const handleShowToast = (msg) => {
@@ -60,7 +60,7 @@ export default function LibraryPage({ exercises, onViewChange, savedPlan, setSav
   }, [exercises, categoryFilter, areaFilter, levelFilter, equipmentFilter, search]);
 
   return (
-    <DashboardLayout activeTab="library" onViewChange={onViewChange} sidebarOpen={sidebarOpen} onToggleSidebar={onToggleSidebar} isMobile={isMobile} onOpenSidebar={onOpenSidebar} onCloseSidebar={onCloseSidebar}>
+    <DashboardLayout activeTab="library" onViewChange={onViewChange} sidebarOpen={sidebarOpen} onToggleSidebar={onToggleSidebar} isMobile={isMobile} onOpenSidebar={onOpenSidebar} onCloseSidebar={onCloseSidebar} theme={theme} onToggleTheme={onToggleTheme} xp={xp}>
       <div className="plan-page animate-fade-in" style={{ maxWidth: 'none', margin: '0', padding: '24px 12px', background: 'var(--bg-base)', minHeight: '100%' }}>
         <div className="plan-day-header">
           <div className="plan-day-header-text">
@@ -293,7 +293,7 @@ function ExerciseCard({ exercise, savedPlan, setSavedPlan, onAdded }) {
         onClick={() => setShowInstructions(true)}
         style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
       >
-        <div className="exercise-card-image-wrap" style={{ aspectRatio: '4/3', backgroundColor: '#1a1a1a' }}>
+        <div className="exercise-card-image-wrap" style={{ aspectRatio: '4/3', backgroundColor: 'var(--bg-elevated)' }}>
           {exercise.images?.[0] ? (
             <img src={getExerciseImageUrl(exercise.images[0])} alt={exercise.name} className="exercise-card-image" loading="lazy" />
           ) : (
@@ -303,7 +303,7 @@ function ExerciseCard({ exercise, savedPlan, setSavedPlan, onAdded }) {
         <div className="exercise-card-body" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px', marginBottom: '8px' }}>
             <h3 className="exercise-card-title" style={{ margin: 0, fontSize: '1.1rem' }}>{exercise.name}</h3>
-            <span className={`badge ${categoryClass}`} style={{ fontSize: '0.7rem', padding: '2px 8px', background: 'rgba(255, 255, 255, 0.1)', color: 'var(--accent-primary)', border: 'none', whiteSpace: 'nowrap' }}>
+            <span className={`badge ${categoryClass}`} style={{ fontSize: '0.7rem', padding: '2px 8px', background: 'transparent', color: 'var(--accent-success)', border: '1px solid var(--accent-success)', whiteSpace: 'nowrap' }}>
               {formatCategoryLabel(exercise.category)}
             </span>
           </div>
@@ -339,7 +339,7 @@ function ExerciseCard({ exercise, savedPlan, setSavedPlan, onAdded }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
               <div>
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-                  <span className={`badge ${categoryClass}`} style={{ background: 'rgba(255, 255, 255, 0.1)', color: 'var(--accent-primary)', border: 'none' }}>
+                  <span className={`badge ${categoryClass}`} style={{ background: 'transparent', color: 'var(--accent-primary)', border: '1px solid var(--accent-primary)' }}>
                     {formatCategoryLabel(exercise.category)}
                   </span>
                   <span className="badge badge-gray">{capitalize(exercise.level)}</span>
@@ -382,14 +382,14 @@ function ExerciseCard({ exercise, savedPlan, setSavedPlan, onAdded }) {
                 </div>
 
                 {avoidFor.length > 0 && (
-                  <div style={{ background: '#2a2a2a', border: '1px solid #444444', borderRadius: 'var(--radius-md)', padding: '20px', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-                    <div style={{ color: '#ff6b6b', marginTop: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '20px', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                    <div style={{ color: 'var(--accent-danger)', marginTop: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                     </div>
                     <div>
-                      <h4 style={{ margin: '0 0 4px 0', color: '#ff6b6b', fontSize: '1.05rem' }}>Injury Warning</h4>
-                      <p style={{ margin: 0, color: '#ff9999', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                        Avoid this exercise if you have injuries in your <strong style={{ color: '#ff6b6b', textDecoration: 'underline' }}>{avoidFor.join(', ')}</strong>.
+                      <h4 style={{ margin: '0 0 4px 0', color: 'var(--accent-danger)', fontSize: '1.05rem' }}>Injury Warning</h4>
+                      <p style={{ margin: 0, color: 'var(--accent-danger)', fontSize: '0.95rem', lineHeight: '1.5' }}>
+                        Avoid this exercise if you have injuries in your <strong style={{ color: 'var(--accent-danger)', textDecoration: 'underline' }}>{avoidFor.join(', ')}</strong>.
                       </p>
                     </div>
                   </div>
@@ -516,7 +516,7 @@ function AddToPlanButton({ exercise, savedPlan, setSavedPlan, onAdded }) {
   return (
     <div ref={dropdownRef} style={{ position: 'relative' }} onClick={e => e.stopPropagation()}>
       <button 
-        className="btn btn-sm btn-add-plan" 
+        className={`btn btn-sm btn-add-plan ${showDropdown ? 'btn-add-plan-active' : ''}`} 
         onClick={(e) => { e.stopPropagation(); setShowDropdown(!showDropdown); }}
         style={{ padding: '6px 12px', fontSize: '0.8rem', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', gap: '6px' }}
       >

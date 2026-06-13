@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Chat.css';
+import { classifyChatInput } from '../../../services/geminiService';
 
 const TOTAL_STEPS = 6;
 
@@ -33,6 +34,7 @@ const STEPS = [
     chips: [
       { label: "Just starting out", value: "under_6m" },
       { label: "A few months", value: "under_6m" },
+      { label: "Returning after a break", value: "returning" },
       { label: "A year or two", value: "6m_2y" },
       { label: "Several years", value: "2y_plus" }
     ],
@@ -132,16 +134,27 @@ export default function Chat({ onComplete }) {
     setInputText('');
   };
 
-  const processAnswer = (answerText) => {
+  const processAnswer = async (answerText) => {
     appendUserMessage(answerText);
     
-    
     const currentStepConfig = STEPS[step];
+    let extractedValue = currentStepConfig.fallback;
+
     const matchedChip = currentStepConfig.chips.find(
       c => c.label.toLowerCase() === answerText.toLowerCase()
     );
-    
-    const extractedValue = matchedChip ? matchedChip.value : currentStepConfig.fallback;
+
+    if (matchedChip) {
+      extractedValue = matchedChip.value;
+    } else {
+      setIsTyping(true);
+      try {
+        extractedValue = await classifyChatInput(answerText, currentStepConfig);
+      } catch (err) {
+        console.error("Classification error:", err);
+      }
+      setIsTyping(false);
+    }
     
     const updatedPrefs = { ...prefs, [currentStepConfig.key]: extractedValue };
     setPrefs(updatedPrefs);
@@ -161,7 +174,6 @@ export default function Chat({ onComplete }) {
         );
       }, 600);
     } else {
-      
       setStep(TOTAL_STEPS);
       setIsTyping(true);
       setTimeout(() => {
@@ -195,19 +207,7 @@ export default function Chat({ onComplete }) {
 
   return (
     <div className="chat-container">
-      <div className="chat-progress">
-        <div className="chat-progress-dots">
-          {STEPS.map((_, i) => (
-            <div
-              key={i}
-              className={`chat-progress-dot ${step > i ? 'done' : step === i ? 'active' : ''}`}
-            />
-          ))}
-        </div>
-        <span className="chat-progress-label" style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.3)' }}>
-          {step < TOTAL_STEPS ? `${step + 1} of ${TOTAL_STEPS}` : 'Building plan…'}
-        </span>
-      </div>
+
 
       <div className="chat-messages">
         {messages.map((msg, idx) => (

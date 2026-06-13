@@ -99,7 +99,7 @@ export default function ExerciseRow({ exercise, index, isCompleted, filteredPool
               onClick={() => onStartFromHere(index)}
               aria-label="Start from here"
             >
-              <Play size={16} style={{ marginLeft: '2px' }} fill="currentColor" />
+              <Play size={14} style={{ marginLeft: '2px', opacity: 0.7 }} fill="currentColor" />
             </button>
           )}
           <button

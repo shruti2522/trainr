@@ -367,7 +367,7 @@ Extract the following preferences based on the message. If something is not expl
 - goal: exactly one of ["build_muscle", "lose_weight", "improve_endurance", "increase_flexibility", "general_fitness"]
 - equipment: array of strings. Use standard options like "No equipment (bodyweight)", "Dumbbells", "Barbell", "Kettlebells", "Resistance bands", "Cable machine", "Gym machines".
 - targetAreas: array of strings. Options: "upper_body", "lower_body", "core", "full_body".
-- duration: their workout experience level. Exactly one of ["under_6m", "6m_2y", "2y_plus"]. Default to "6m_2y" if unsure.
+- duration: their workout experience level. Exactly one of ["under_6m", "6m_2y", "2y_plus", "returning"]. Default to "6m_2y" if unsure.
 - injuries: array of strings (e.g., ["knees", "lower back"]). Empty if none mentioned.
 - sessionDuration: their desired session length. Extract from context. Use one of ["20_30", "30_45", "45_60", "60_90", "90_plus"]. Mapping guide: "15-30 min" or "under 30" -> "20_30", "30-45 min" -> "30_45", "45 min" or "45-60 min" -> "45_60", "1 hour" or "60 min" or "an hour" -> "60_90", "1 hour+" or "more than an hour" or "1.5 hours" or "90 minutes" or "90+" -> "90_plus". Default to "45_60" if unclear.
 `;
@@ -453,4 +453,60 @@ Respond with ONLY valid JSON in this format:
   const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
   return extractJSON(rawText);
+}
+
+export async function classifyChatInput(userText, stepConfig) {
+  if (!GEMINI_API_KEY || GEMINI_API_KEY === 'PASTE_YOUR_GEMINI_API_KEY_HERE') {
+    throw new Error('API key is missing or invalid.');
+  }
+
+  const allowedValues = stepConfig.chips.map(c => JSON.stringify(c.value));
+  const optionsContext = stepConfig.chips.map(c => `- "${c.label}" (maps to value: ${JSON.stringify(c.value)})`).join('\n');
+
+  const prompt = `You are an intelligent fitness assistant processing a user's onboarding chat answer.
+Question asked: "${stepConfig.question}"
+User's raw answer: "${userText}"
+
+Available categories:
+${optionsContext}
+
+Your job is to deduce which category best fits the user's answer.
+For example, if the question is about experience and the user says "not much" or "a few times", they belong in the beginner/just starting category.
+If the question is about goal and they say "tone my body and arms", they belong in "lose_weight" or "build_muscle" depending on context, or whatever best fits.
+
+Respond with ONLY valid JSON in this format:
+{
+  "matchedValue": <one of the exact values from the available categories>
+}
+
+If no category fits at all, return the value: ${JSON.stringify(stepConfig.fallback)}
+`;
+
+  const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.1,
+        responseMimeType: 'application/json'
+      }
+    })
+  });
+
+  if (!response.ok) throw new Error('Failed to classify chat input');
+
+  const data = await response.json();
+  const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  
+  const parsed = extractJSON(rawText);
+  if (parsed && parsed.matchedValue !== undefined) {
+    try {
+      return parsed.matchedValue;
+    } catch (e) {
+      return parsed.matchedValue;
+    }
+  }
+
+  return stepConfig.fallback;
 }

@@ -5,16 +5,31 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 function SetTimer({ durationSeconds, onDone }) {
 	const isCountdown = !!durationSeconds;
 	const [elapsed, setElapsed] = useState(0);
+	const startRef = useRef(Date.now());
+	const onDoneRef = useRef(onDone);
 
 	useEffect(() => {
+		onDoneRef.current = onDone;
+	}, [onDone]);
+
+	useEffect(() => {
+		startRef.current = Date.now();
 		setElapsed(0);
 	}, [durationSeconds]);
 
 	useEffect(() => {
-		if (isCountdown && elapsed >= durationSeconds) { onDone(); return; }
-		const t = setTimeout(() => setElapsed((e) => e + 1), 1000);
-		return () => clearTimeout(t);
-	}, [elapsed, isCountdown, durationSeconds, onDone]);
+		const t = setInterval(() => {
+			const currentElapsed = Math.floor((Date.now() - startRef.current) / 1000);
+			if (isCountdown && currentElapsed >= durationSeconds) {
+				setElapsed(durationSeconds);
+				clearInterval(t);
+				onDoneRef.current();
+			} else {
+				setElapsed(currentElapsed);
+			}
+		}, 200);
+		return () => clearInterval(t);
+	}, [isCountdown, durationSeconds]);
 
 	const remaining = isCountdown ? Math.max(0, durationSeconds - elapsed) : elapsed;
 	
@@ -232,17 +247,23 @@ export default function WorkoutSession({ day, onBack, onComplete, onUpdateProgre
 
 						<div style={{ display: 'flex', gap: '8px', justifyContent: 'center', width: '100%' }}>
                 {currentStep.ei > 0 && (
-                  <button className="btn session-skip-btn" onClick={prevExercise} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', background: 'transparent', border: '1px solid white', color: 'white' }}>
+                  <button className="btn session-skip-btn" onClick={prevExercise} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', background: 'transparent', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
                     <ChevronLeft size={16} /> Prev
                   </button>
                 )}
                 
                 {currentStep.ei < exercises.length - 1 && (
-                  <button className="btn session-skip-btn" onClick={nextExercise} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', background: 'transparent', border: '1px solid white', color: 'white' }}>
+                  <button className="btn session-skip-btn" onClick={nextExercise} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', background: 'transparent', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
                     Next <ChevronRight size={16} />
                   </button>
                 )}
               </div>
+              
+              {ex.restSeconds > 0 && !isLastStep && (
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '4px' }}>
+                  Rest {ex.restSeconds}s after this {(currentStep.si === currentStep.total - 1) ? 'exercise' : 'set'}
+                </div>
+              )}
 					</div>
 				</div>
 			</div>
