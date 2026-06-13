@@ -51,7 +51,7 @@ function buildPrompt(prefs, filteredExercises) {
 
   const dayCount = parseInt(frequency, 10) || 3;
 
-  const exerciseList = scored.slice(0, Math.max(40, dayCount * 15)).map(({ ex }) => ({
+  const exerciseList = scored.slice(0, Math.min(50, Math.max(30, dayCount * 8))).map(({ ex }) => ({
     id: ex.id,
     name: ex.name,
     primaryMuscles: ex.primaryMuscles,
@@ -255,7 +255,7 @@ export async function generatePlan(prefs, filteredExercises, signal, allExercise
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: {
             temperature: 0.4,
-            maxOutputTokens: 8192,
+            maxOutputTokens: 6000,
             responseMimeType: 'application/json',
             responseSchema: {
               type: "OBJECT",

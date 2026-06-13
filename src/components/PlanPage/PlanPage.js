@@ -156,7 +156,7 @@ export default function PlanPage({
     if (filtered.length > 0) fetchPlan();
     else setIsLoading(false);
     return () => controller.abort();
-  }, [filtered, prefs, level, score, savedPlan, setSavedPlan, exercises]);
+  }, [filtered, level, score, savedPlan, setSavedPlan]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!savedPlan || savedPlan.length === 0) return;
