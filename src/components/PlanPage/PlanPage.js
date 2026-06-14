@@ -262,7 +262,7 @@ export default function PlanPage({
       const candidates = filtered.filter((e) => e.category === current.category && !usedIds.has(e.id));
       if (candidates.length === 0) return prev;
       const replacement = candidates[Math.floor(Math.random() * candidates.length)];
-      day.exercises[exIdx] = { ...replacement, sets: current.sets, reps: current.reps, durationSeconds: current.durationSeconds, restSeconds: current.restSeconds, note: `Focus on controlled movement throughout.` };
+      day.exercises[exIdx] = { ...replacement, sets: current.sets, reps: current.reps, durationSeconds: current.durationSeconds, restSeconds: current.restSeconds, phase: current.phase, note: `Focus on controlled movement throughout.` };
       return next;
     });
   }
@@ -280,7 +280,7 @@ export default function PlanPage({
       const next = prev.map((d) => ({ ...d, exercises: [...d.exercises] }));
       const day = next[dayIdx];
       const current = day.exercises[exIdx];
-      day.exercises[exIdx] = { ...newExercise, sets: current.sets, reps: current.reps, durationSeconds: current.durationSeconds, restSeconds: current.restSeconds, note: `Focus on controlled movement throughout.` };
+      day.exercises[exIdx] = { ...newExercise, sets: current.sets, reps: current.reps, durationSeconds: current.durationSeconds, restSeconds: current.restSeconds, phase: current.phase, note: `Focus on controlled movement throughout.` };
       return next;
     });
   }
@@ -289,7 +289,8 @@ export default function PlanPage({
     setSavedPlan((prev) => {
       const next = prev.map((d) => ({ ...d, exercises: [...d.exercises] }));
       const day = next[dayIdx];
-      day.exercises.push({ ...newExercise, sets: 3, reps: 10, durationSeconds: null, restSeconds: 60, note: `Focus on controlled movement throughout.` });
+      const lastPhase = day.exercises.length > 0 ? day.exercises[day.exercises.length - 1].phase : 'main';
+      day.exercises.push({ ...newExercise, sets: 3, reps: 10, durationSeconds: null, restSeconds: 60, phase: lastPhase, note: `Focus on controlled movement throughout.` });
       return next;
     });
   }

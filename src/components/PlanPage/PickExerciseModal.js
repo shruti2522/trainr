@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { capitalize, formatCategoryLabel } from '../../utils/helpers';
 
 export default function PickExerciseModal({ allExercises, currentId, onPick, onClose }) {
@@ -21,7 +22,7 @@ export default function PickExerciseModal({ allExercises, currentId, onPick, onC
     }, {});
   }, [allExercises, currentId, query]);
 
-  return (
+  const modalContent = (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content pick-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
@@ -63,4 +64,6 @@ export default function PickExerciseModal({ allExercises, currentId, onPick, onC
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
